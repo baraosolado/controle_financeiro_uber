@@ -63,7 +63,7 @@ Se o EasyPanel suportar SSH:
    - Cole a chave pública
 
 3. **Configurar no EasyPanel:**
-   - Use a URL SSH: `git@github.com:baraosolado/controle_financeiro_uber.git`
+   - Use a URL SSH: `git@github.com:baraosolado/controle_financeiro_uber.`
    - Configure a chave privada no EasyPanel
 
 ### Verificar se o Repositório Está Acessível
@@ -97,7 +97,7 @@ curl https://github.com/baraosolado/controle_financeiro_uber
    - **Repository URL:** `https://github.com/baraosolado/controle_financeiro_uber.git`
    - **Branch:** `main`
 3. ✅ Tente fazer o deploy novamente
-
+git
 ### Troubleshooting
 
 **Erro persiste após tornar público:**

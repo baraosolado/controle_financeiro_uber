@@ -35,7 +35,9 @@ const nextConfig = {
         headers: [
           {
             key: 'Access-Control-Allow-Origin',
-            value: process.env.ALLOWED_ORIGINS?.split(',')[0] || '*',
+            value: (process.env.ALLOWED_ORIGINS && typeof process.env.ALLOWED_ORIGINS === 'string') 
+              ? process.env.ALLOWED_ORIGINS.split(',')[0] 
+              : '*',
           },
           {
             key: 'Access-Control-Allow-Methods',

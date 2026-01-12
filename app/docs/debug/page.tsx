@@ -91,7 +91,7 @@ export default function DeveloperDebugPage() {
             <p className="text-sm text-blue-800">
               <strong>Como usar:</strong>
               <br />
-              1. Clique em "Ativar Acesso de Desenvolvedor" para dar acesso a esta conta
+              1. Clique em &quot;Ativar Acesso de Desenvolvedor&quot; para dar acesso a esta conta
               <br />
               2. Ou configure seu email nas variáveis de ambiente: DEV_EMAIL_1, DEV_EMAIL_2, etc.
               <br />
