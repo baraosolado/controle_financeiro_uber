@@ -39,11 +39,11 @@ RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Fazer build e capturar saída
-RUN npx next build 2>&1 | tee build.log; \
-    BUILD_EXIT_CODE=${PIPESTATUS[0]}; \
-    if [ $BUILD_EXIT_CODE -ne 0 ]; then \
-        echo "=== ❌ BUILD FALHOU (exit code: $BUILD_EXIT_CODE) ==="; \
+# Fazer build e capturar saída (compatível com /bin/sh)
+RUN set -e; \
+    npx next build 2>&1 | tee build.log || BUILD_FAILED=1; \
+    if [ -n "$BUILD_FAILED" ]; then \
+        echo "=== ❌ BUILD FALHOU ==="; \
         echo "=== Logs completos do build ==="; \
         cat build.log; \
         echo "=== Verificando .next/trace ==="; \
