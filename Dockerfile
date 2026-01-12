@@ -1,79 +1,82 @@
 # Dockerfile para Controle Financeiro Uber
-# Multi-stage build para otimizar tamanho da imagem
+# Build multi-stage otimizado
 
-# Stage 1: Dependencies
+# ============================================
+# Stage 1: Instalar dependências
+# ============================================
 FROM node:18-alpine AS deps
 WORKDIR /app
 
-# Instalar dependências do sistema necessárias (incluindo build tools)
+# Instalar ferramentas de build
 RUN apk add --no-cache libc6-compat openssl python3 make g++
 
 # Copiar arquivos de dependências
-COPY package.json ./
-COPY package-lock.json* ./
-# Instalar dependências (fallback para npm install se npm ci falhar)
-RUN npm ci || npm install
+COPY package.json package-lock.json* ./
 
-# Stage 2: Builder
+# Instalar dependências
+RUN npm ci
+
+# ============================================
+# Stage 2: Build da aplicação
+# ============================================
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Instalar dependências do sistema para build (incluindo build tools)
+# Instalar ferramentas de build
 RUN apk add --no-cache libc6-compat openssl python3 make g++
 
-# Copiar dependências do stage anterior
+# Copiar dependências instaladas
 COPY --from=deps /app/node_modules ./node_modules
+
+# Copiar código fonte
 COPY . .
 
-# Gerar Prisma Client (usa DATABASE_URL fake se não estiver definida)
+# Gerar Prisma Client (precisa de DATABASE_URL, mesmo que fake)
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
 RUN npx prisma generate
 
-# Build da aplicação Next.js (sem gerar Prisma novamente)
+# Build Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-# Usar next build diretamente, já que Prisma foi gerado acima
-# Verificar se standalone foi gerado após o build
-RUN npx next build 2>&1 | tee build.log && \
-    (ls -la .next/standalone 2>/dev/null && echo "✅ Standalone gerado!" || (echo "❌ ERRO: standalone não gerado!" && cat build.log && cat .next/trace 2>/dev/null || true && exit 1))
+RUN npx next build
 
-# Stage 3: Runner (produção)
+# ============================================
+# Stage 3: Imagem de produção
+# ============================================
 FROM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Instalar openssl para Prisma
+# Instalar openssl (necessário para Prisma)
 RUN apk add --no-cache openssl
 
 # Criar usuário não-root
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Copiar arquivos necessários do standalone build
+# Copiar arquivos públicos
 COPY --from=builder /app/public ./public
 
-# Copiar standalone build
+# Copiar build standalone do Next.js
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copiar Prisma files necessários
+# Copiar Prisma (necessário em runtime)
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-
-# Copiar package.json para scripts do Prisma (se necessário)
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
-# Ajustar permissões
-RUN chown -R nextjs:nodejs /app
-
+# Usar usuário não-root
 USER nextjs
 
+# Expor porta
 EXPOSE 3000
 
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
+# Iniciar aplicação
 CMD ["node", "server.js"]
