@@ -9,8 +9,10 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat openssl
 
 # Copiar arquivos de dependências
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package.json ./
+COPY package-lock.json* ./
+# Instalar dependências (fallback para npm install se npm ci falhar)
+RUN npm ci || npm install
 
 # Stage 2: Builder
 FROM node:18-alpine AS builder
@@ -24,15 +26,15 @@ COPY . .
 RUN npx prisma generate
 
 # Build da aplicação Next.js
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
 # Stage 3: Runner (produção)
 FROM node:18-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Instalar openssl para Prisma
 RUN apk add --no-cache openssl
@@ -63,7 +65,7 @@ USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 CMD ["node", "server.js"]
