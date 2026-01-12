@@ -18,15 +18,20 @@ RUN npm ci || npm install
 FROM node:18-alpine AS builder
 WORKDIR /app
 
+# Instalar dependências do sistema para build
+RUN apk add --no-cache libc6-compat openssl
+
 # Copiar dependências do stage anterior
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Gerar Prisma Client
+# Gerar Prisma Client (usa DATABASE_URL fake se não estiver definida)
+ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
 RUN npx prisma generate
 
 # Build da aplicação Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 RUN npm run build
 
 # Stage 3: Runner (produção)
