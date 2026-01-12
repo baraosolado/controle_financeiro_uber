@@ -1,0 +1,83 @@
+# Dockerfile usando Heroku Builder - Versão otimizada para builds Node.js
+# Use este se o Dockerfile principal continuar com problemas
+
+# Stage 1: Dependencies
+FROM heroku/builder:24 AS deps
+WORKDIR /app
+
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar arquivos de dependências
+COPY package.json ./
+COPY package-lock.json* ./
+
+# Instalar dependências
+RUN npm ci || npm install
+
+# Stage 2: Builder
+FROM heroku/builder:24 AS builder
+WORKDIR /app
+
+# Instalar dependências do sistema
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar dependências
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Gerar Prisma Client
+ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
+RUN npx prisma generate
+
+# Build da aplicação Next.js
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+RUN npx next build
+
+# Verificar se standalone foi gerado
+RUN ls -la .next/standalone 2>/dev/null && echo "✅ Standalone gerado!" || (echo "❌ ERRO: standalone não gerado!" && exit 1)
+
+# Stage 3: Runner (produção)
+FROM node:18-slim AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Instalar openssl para Prisma
+RUN apt-get update && apt-get install -y \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Criar usuário não-root
+RUN groupadd --system --gid 1001 nodejs && \
+    useradd --system --uid 1001 nextjs
+
+# Copiar arquivos necessários do standalone build
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copiar Prisma files necessários
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+CMD ["node", "server.js"]
