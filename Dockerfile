@@ -35,10 +35,10 @@ COPY . .
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
 RUN npx prisma generate
 
-# Build Next.js
+# Build Next.js (com logs detalhados)
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-RUN npx next build
+RUN npx next build 2>&1 | tee build.log || (echo "=== Build falhou ===" && cat build.log && exit 1)
 
 # ============================================
 # Stage 3: Imagem de produção
