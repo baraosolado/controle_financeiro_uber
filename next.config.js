@@ -1,9 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone', // Necessário para Docker
+  // Output standalone: cria uma versão otimizada para Docker
+  // Inclui apenas os arquivos necessários para rodar em produção
+  output: 'standalone',
+  
+  // Configuração de imagens
   images: {
     domains: ['localhost'],
+    // Adicione outros domínios de imagens aqui se necessário
+    // domains: ['localhost', 'seu-cdn.com'],
   },
   async headers() {
     return [

@@ -1,45 +1,76 @@
-# Dockerfile para Controle Financeiro Uber
-# Build multi-stage otimizado
+# ============================================
+# Dockerfile Production-Ready
+# Next.js 14 + Prisma + PostgreSQL
+# ============================================
 
 # ============================================
-# Stage 1: Instalar dependências
+# Stage 1: Dependencies
+# Instala apenas as dependências (otimiza cache)
 # ============================================
-FROM node:18-alpine AS deps
+FROM node:20-alpine AS deps
+
 WORKDIR /app
 
-# Instalar ferramentas de build
-RUN apk add --no-cache libc6-compat openssl python3 make g++
+# Instalar ferramentas de build necessárias
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl \
+    python3 \
+    make \
+    g++
 
-# Copiar arquivos de dependências
+# Copiar apenas arquivos de dependências (melhora cache do Docker)
 COPY package.json package-lock.json* ./
 
-# Instalar dependências
-RUN npm install --legacy-peer-deps
+# Instalar dependências de produção e desenvolvimento
+# --legacy-peer-deps: resolve conflitos de peer dependencies
+RUN npm ci --legacy-peer-deps || npm install --legacy-peer-deps
 
 # ============================================
-# Stage 2: Build da aplicação
+# Stage 2: Builder
+# Compila a aplicação Next.js
 # ============================================
-FROM node:18-alpine AS builder
+FROM node:20-alpine AS builder
+
 WORKDIR /app
 
 # Instalar ferramentas de build
-RUN apk add --no-cache libc6-compat openssl python3 make g++
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl \
+    python3 \
+    make \
+    g++
 
-# Copiar dependências instaladas
+# Copiar dependências do stage anterior
 COPY --from=deps /app/node_modules ./node_modules
 
 # Copiar código fonte
 COPY . .
 
-# Gerar Prisma Client (precisa de DATABASE_URL, mesmo que fake)
+# Gerar Prisma Client
+# DATABASE_URL fake é necessário apenas para gerar o client
+# O Prisma não precisa de conexão real durante o build
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
 RUN npx prisma generate
 
-# Build Next.js (com logs detalhados)
+# Variáveis de ambiente para build
+# NEXT_PUBLIC_* são injetadas no build time
+ARG NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_DEV_EMAIL_1
+ARG NEXT_PUBLIC_DEV_EMAIL_2
+ARG NEXT_PUBLIC_DEV_EMAIL_3
+
+ENV NEXT_PUBLIC_APP_URL=${NEXT_PUBLIC_APP_URL}
+ENV NEXT_PUBLIC_DEV_EMAIL_1=${NEXT_PUBLIC_DEV_EMAIL_1}
+ENV NEXT_PUBLIC_DEV_EMAIL_2=${NEXT_PUBLIC_DEV_EMAIL_2}
+ENV NEXT_PUBLIC_DEV_EMAIL_3=${NEXT_PUBLIC_DEV_EMAIL_3}
+
+# Build Next.js em modo produção
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Fazer build e capturar saída (compatível com /bin/sh)
+# Build com captura de erros detalhada
 RUN npx next build 2>&1 | tee build.log || ( \
     echo "=== ❌ BUILD FALHOU ===" && \
     echo "=== Logs completos do build ===" && \
@@ -61,29 +92,32 @@ fi && \
 echo "✅ Standalone gerado com sucesso!"
 
 # ============================================
-# Stage 3: Imagem de produção
+# Stage 3: Runner (Produção)
+# Imagem final otimizada apenas com runtime
 # ============================================
-FROM node:18-alpine AS runner
+FROM node:20-alpine AS runner
+
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Instalar openssl (necessário para Prisma)
+# Instalar apenas openssl (necessário para Prisma em runtime)
 RUN apk add --no-cache openssl
 
-# Criar usuário não-root
+# Criar usuário não-root para segurança
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copiar arquivos públicos (diretório public agora existe no projeto)
+# Copiar arquivos públicos
 COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
 # Copiar build standalone do Next.js
+# O output standalone contém apenas o necessário para rodar
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copiar Prisma (necessário em runtime)
+# Copiar Prisma (necessário em runtime para queries)
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
@@ -99,4 +133,5 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Iniciar aplicação
+# O Next.js standalone cria um server.js na raiz
 CMD ["node", "server.js"]

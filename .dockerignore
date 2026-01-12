@@ -1,16 +1,23 @@
-# Dependencies
+# ============================================
+# .dockerignore - Otimiza build do Docker
+# ============================================
+
+# Dependencies (serão instaladas no container)
 node_modules
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
 
-# Next.js
+# Build outputs (serão gerados no container)
 .next
 out
 build
 dist
+*.tsbuildinfo
 
-# Environment
+# Environment files (usar variáveis do EasyPanel)
 .env
 .env*.local
 .env.development.local
@@ -23,40 +30,80 @@ dist
 *.swp
 *.swo
 *~
+.project
+.classpath
+.settings/
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
 
 # Git
 .git
 .gitignore
+.gitattributes
+.github
 
 # Docker
-Dockerfile.alternative
-docker-compose.yml
+Dockerfile*
+docker-compose*.yml
+.dockerignore
 
-# Capacitor
+# Capacitor (não necessário no build Docker)
 android
 ios
 .capacitor
 
-# Prisma
+# Prisma (manter apenas schema e migrations)
+# Migrations SQL serão aplicadas em runtime
 prisma/migrations/*.sql
 !prisma/migrations/.gitkeep
 
 # Logs
 *.log
 logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
 # Test
 coverage
 .nyc_output
+.coverage
+*.lcov
+.jest
 
-# Misc
-README.md
+# Documentação (não necessário no build)
 *.md
 !README.md
 !DEPLOY_EASYPANEL.md
 !EASYPANEL_QUICK_START.md
 !EASYPANEL_GITHUB_SETUP.md
+!EASYPANEL_SEM_DOMINIO.md
+
+# Misc
+.cache
+.temp
+.tmp
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# Arquivos específicos do projeto
+Uber.prd
+uber02.prd
+ANALISE_PRD.md
+FASE3_PREMIUM_IMPLEMENTACAO.md
+PLANO_ACAO_ANDROID.md
+TROUBLESHOOTING_BUILD.md
+README_API.md
