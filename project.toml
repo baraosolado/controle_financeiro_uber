@@ -1,0 +1,26 @@
+# Paketo Buildpacks Configuration
+# Para Next.js com Prisma
+
+[build]
+  # Buildpacks a serem usados (em ordem)
+  [[build.buildpacks]]
+    id = "paketo-buildpacks/nodejs"
+    version = "latest"
+
+  # Variáveis de ambiente durante o build
+  [build.env]
+    # Desabilitar telemetria do Next.js
+    NEXT_TELEMETRY_DISABLED = "1"
+    NODE_ENV = "production"
+    
+    # Prisma precisa de DATABASE_URL mesmo que fake durante o build
+    # Será sobrescrito em runtime
+    DATABASE_URL = "postgresql://fake:fake@fake:5432/fake?schema=public"
+
+[run]
+  # Variáveis de ambiente em runtime
+  # Estas serão sobrescritas pelas variáveis do EasyPanel
+  [run.env]
+    PORT = "3000"
+    HOSTNAME = "0.0.0.0"
+    NODE_ENV = "production"

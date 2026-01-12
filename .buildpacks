@@ -1,0 +1,5 @@
+# Lista de buildpacks (formato alternativo)
+# Usado por algumas plataformas como Heroku
+
+https://github.com/heroku/heroku-buildpack-nodejs
+https://github.com/heroku/heroku-buildpack-prisma

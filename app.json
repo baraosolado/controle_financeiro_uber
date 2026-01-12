@@ -1,0 +1,43 @@
+{
+  "name": "controle-financeiro-uber",
+  "description": "Sistema de controle financeiro para motoristas de aplicativo",
+  "repository": "https://github.com/baraosolado/controle_financeiro_uber",
+  "logo": "https://node-js-sample.herokuapp.com/node.png",
+  "keywords": ["nextjs", "node", "prisma", "postgresql"],
+  "env": {
+    "DATABASE_URL": {
+      "description": "URL de conexão com PostgreSQL",
+      "required": true
+    },
+    "NEXTAUTH_SECRET": {
+      "description": "Secret para NextAuth.js (gere com: openssl rand -base64 32)",
+      "required": true
+    },
+    "NEXTAUTH_URL": {
+      "description": "URL da aplicação",
+      "required": true
+    },
+    "ALLOWED_ORIGINS": {
+      "description": "Origens permitidas para CORS",
+      "required": true
+    },
+    "NEXT_PUBLIC_APP_URL": {
+      "description": "URL pública da aplicação",
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "standard-1x"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "npx prisma migrate deploy"
+  }
+}
