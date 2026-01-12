@@ -38,7 +38,9 @@ RUN npx prisma generate
 # Build Next.js (com logs detalhados)
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-RUN npx next build 2>&1 | tee build.log || (echo "=== Build falhou ===" && cat build.log && exit 1)
+RUN npx next build 2>&1 | tee build.log && \
+    echo "=== Verificando se standalone foi gerado ===" && \
+    (test -d .next/standalone && echo "✅ Standalone gerado!" || (echo "❌ ERRO: standalone não gerado!" && cat build.log && exit 1))
 
 # ============================================
 # Stage 3: Imagem de produção
