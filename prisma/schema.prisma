@@ -1,0 +1,222 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password      String
+  phone         String?
+  city          String?
+  state         String?
+  photoUrl      String?  @map("photo_url")
+  emailVerified Boolean  @default(false) @map("email_verified")
+  vehicleType   String?  @map("vehicle_type") // Sedan, SUV, Hatch, Moto
+  startYear     Int?     @map("start_year") // Ano que começou a trabalhar
+  platforms     Json?    @default("[]") // ["uber", "99", "indrive", "cabify"]
+  preferences   Json?    @default("{}") // Preferências do sistema
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  records      Record[]
+  fuelLogs     FuelLog[]
+  maintenances Maintenance[]
+  goals        Goal[]
+  alerts       Alert[]
+  achievements Achievement[]
+  apiKeys      ApiKey[]
+
+  @@map("users")
+}
+
+model Record {
+  id                 String   @id @default(uuid())
+  userId             String   @map("user_id")
+  date               DateTime @db.Date
+  platforms          Json?    @default("[]") // ["uber", "99"] - plataformas utilizadas
+  revenue            Decimal  @db.Decimal(10, 2)
+  revenueBreakdown   Json?    @default("{}") @map("revenue_breakdown") // {"uber": 200.00, "99": 150.00}
+  expenses           Decimal  @db.Decimal(10, 2)
+  // Breakdown detalhado de gastos
+  expenseFuel        Decimal? @default(0) @map("expense_fuel") @db.Decimal(10, 2)
+  expenseMaintenance Decimal? @default(0) @map("expense_maintenance") @db.Decimal(10, 2)
+  expenseFood        Decimal? @default(0) @map("expense_food") @db.Decimal(10, 2)
+  expenseWash        Decimal? @default(0) @map("expense_wash") @db.Decimal(10, 2)
+  expenseToll        Decimal? @default(0) @map("expense_toll") @db.Decimal(10, 2)
+  expenseParking     Decimal? @default(0) @map("expense_parking") @db.Decimal(10, 2)
+  expenseOther       Decimal? @default(0) @map("expense_other") @db.Decimal(10, 2)
+  kilometers         Decimal  @db.Decimal(10, 2)
+  kmPerLiter         Decimal? @map("km_per_liter") @db.Decimal(5, 2) // Média de km/litro do dia
+  foodExpenses       Decimal? @map("food_expenses") @db.Decimal(10, 2) // Gastos com alimentação (mantido para compatibilidade)
+  profit             Decimal  @db.Decimal(10, 2)
+  // Informações complementares
+  tripsCount         Int?     @map("trips_count") // Número de corridas
+  hoursWorked        Decimal? @map("hours_worked") @db.Decimal(4, 2) // Horas trabalhadas
+  startTime          String?  @map("start_time") // HH:MM - horário de início
+  endTime            String?  @map("end_time") // HH:MM - horário de fim
+  notes              String?  @db.Text // Aumentado para 300 caracteres
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+  @@index([userId, date])
+  @@map("records")
+}
+
+model FuelLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  date      DateTime @db.Date
+  liters    Decimal  @db.Decimal(10, 2)
+  price     Decimal  @db.Decimal(10, 2)
+  totalCost Decimal  @db.Decimal(10, 2)
+  odometer  Decimal? @db.Decimal(10, 2) // Odômetro no momento do abastecimento
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
+  @@index([userId, date])
+  @@map("fuel_logs")
+}
+
+model Maintenance {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  date         DateTime  @db.Date
+  type         String // Tipo: revisão, troca de óleo, pneu, freio, etc.
+  description  String
+  cost         Decimal   @db.Decimal(10, 2)
+  odometer     Decimal?  @db.Decimal(10, 2) // Odômetro no momento da manutenção
+  nextDate     DateTime? @db.Date // Próxima manutenção prevista
+  nextOdometer Decimal?  @db.Decimal(10, 2) // Próxima manutenção por km
+  notes        String?
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
+  @@index([userId, date])
+  @@map("maintenances")
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  email     String
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([email])
+  @@index([token])
+  @@map("password_resets")
+}
+
+model Goal {
+  id           String    @id @default(uuid())
+  userId       String    @map("user_id")
+  type         String // 'monthly', 'weekly', 'custom'
+  targetValue  Decimal   @map("target_value") @db.Decimal(10, 2)
+  targetPeriod DateTime  @map("target_period") @db.Date // mês/semana de referência
+  currentValue Decimal   @default(0) @map("current_value") @db.Decimal(10, 2)
+  achieved     Boolean   @default(false)
+  achievedAt   DateTime? @map("achieved_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, targetPeriod])
+  @@map("goals")
+}
+
+model Alert {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String // 'performance', 'opportunity', 'maintenance', 'benchmark'
+  title     String
+  message   String   @db.Text
+  severity  String   @default("info") // 'info', 'warning', 'success', 'error'
+  read      Boolean  @default(false)
+  actionUrl String?  @map("action_url")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, read])
+  @@index([userId, read, createdAt])
+  @@map("alerts")
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  type        String   // 'first_record', 'week_streak', 'month_goal', 'top_10_percent', 'hundred_days', 'efficiency_master', 'growth_champion'
+  title       String
+  description String   @db.Text
+  icon        String   // Emoji ou código de ícone
+  unlockedAt  DateTime @default(now()) @map("unlocked_at")
+  metadata    Json?    // Dados adicionais sobre a conquista
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+  @@map("achievements")
+}
+
+model BenchmarkData {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  city            String?
+  state           String?
+  vehicleType     String?  @map("vehicle_type")
+  platform        String?  // 'uber', '99', etc.
+  period          String   // 'month', 'week'
+  periodDate      DateTime @map("period_date") // Data de referência do período
+  avgDailyProfit  Decimal  @map("avg_daily_profit") @db.Decimal(10, 2)
+  avgProfitPerKm  Decimal  @map("avg_profit_per_km") @db.Decimal(10, 2)
+  avgDaysWorked   Decimal  @map("avg_days_worked") @db.Decimal(5, 2)
+  efficiency      Decimal  @db.Decimal(5, 2) // lucro/gastos
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([city, state, vehicleType, platform, period, periodDate])
+  @@map("benchmark_data")
+}
+
+model ApiKey {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  name        String   // Nome descritivo da chave
+  key         String   @unique // Hash da chave
+  keyPrefix   String   @map("key_prefix") // Primeiros 12 caracteres para exibição
+  lastUsedAt  DateTime? @map("last_used_at")
+  expiresAt   DateTime? @map("expires_at")
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([key])
+  @@map("api_keys")
+}

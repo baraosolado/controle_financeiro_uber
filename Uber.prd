@@ -1,0 +1,604 @@
+# PRD - Sistema de Controle Financeiro para Motoristas de Aplicativo
+
+## 1. Visão Geral do Produto
+
+### 1.1 Objetivo
+Desenvolver um sistema web/mobile simples e eficiente para motoristas de aplicativo (Uber, 99, etc.) controlarem suas finanças diárias, permitindo registro rápido de faturamento, gastos e quilometragem, com dashboards visuais para acompanhamento de performance.
+
+### 1.2 Público-Alvo
+- Motoristas de aplicativo (Uber, 99, inDrive, etc.)
+- Motoristas autônomos que precisam controlar finanças
+- Perfil: pessoas que trabalham longas horas, precisam de algo rápido e prático no celular
+
+### 1.3 Problema a Resolver
+Motoristas não têm controle claro de quanto realmente lucram por dia, gastam tempo com planilhas complexas ou não conseguem visualizar se o trabalho está sendo rentável.
+
+### 1.4 Proposta de Valor
+Sistema simples onde em menos de 1 minuto o motorista registra o dia inteiro e vê instantaneamente seu lucro real, tendências e performance.
+
+---
+
+## 2. Funcionalidades do Sistema
+
+### 2.1 Autenticação e Cadastro
+
+#### 2.1.1 Tela de Login
+**Elementos:**
+- Logo do sistema (ícone de carro + cifrão)
+- Campo: E-mail
+- Campo: Senha
+- Checkbox: "Lembrar-me"
+- Botão: "Entrar" (destaque, cor primária)
+- Link: "Esqueci minha senha"
+- Link: "Não tem conta? Cadastre-se"
+
+**Validações:**
+- E-mail deve ser válido (formato)
+- Senha mínimo 6 caracteres
+- Mensagens de erro claras e amigáveis
+- Rate limiting: máximo 5 tentativas em 15 minutos
+
+**Comportamento:**
+- Ao fazer login com sucesso, redireciona para o Dashboard
+- Se "Lembrar-me" marcado, manter sessão por 30 dias
+- Mostrar loading durante autenticação
+
+#### 2.1.2 Tela de Cadastro
+**Elementos:**
+- Campo: Nome completo
+- Campo: E-mail
+- Campo: Senha
+- Campo: Confirmar senha
+- Campo: Celular (opcional, para futuras notificações)
+- Checkbox: "Aceito os termos de uso e política de privacidade"
+- Botão: "Criar Conta" (destaque)
+- Link: "Já tem conta? Faça login"
+
+**Validações:**
+- Nome: mínimo 3 caracteres
+- E-mail: formato válido e único no sistema
+- Senha: mínimo 6 caracteres, deve conter letra e número
+- Confirmar senha: deve ser igual à senha
+- Celular: formato válido brasileiro (11) 99999-9999
+- Termos: deve estar marcado
+
+**Comportamento:**
+- Ao criar conta, enviar e-mail de boas-vindas
+- Redirecionar automaticamente para tutorial/onboarding rápido
+- Criar perfil padrão do usuário
+
+#### 2.1.3 Recuperação de Senha
+**Elementos:**
+- Campo: E-mail cadastrado
+- Botão: "Enviar link de recuperação"
+- Mensagem de confirmação
+
+**Comportamento:**
+- Enviar e-mail com link válido por 1 hora
+- Link direciona para página de redefinição
+- Campos: Nova senha + Confirmar nova senha
+- Após redefinir, redireciona para login
+
+---
+
+### 2.2 Dashboard Principal
+
+#### 2.2.1 Header
+**Elementos:**
+- Logo/Nome do sistema
+- Nome do usuário
+- Botão: "Novo Registro" (sempre visível, fixo)
+- Menu dropdown do usuário:
+  - Meu Perfil
+  - Configurações
+  - Sair
+
+#### 2.2.2 Cards de Resumo (Mês Atual)
+**4 Cards principais:**
+
+1. **Faturamento**
+   - Ícone: Cifrão verde
+   - Valor: R$ X.XXX,XX
+   - Label: "Faturamento do Mês"
+   - Badge: % de variação vs mês anterior
+
+2. **Gastos**
+   - Ícone: Combustível vermelho
+   - Valor: R$ X.XXX,XX
+   - Label: "Gastos do Mês"
+   - Badge: % de variação vs mês anterior
+
+3. **Lucro Líquido**
+   - Ícone: Gráfico crescente azul
+   - Valor: R$ X.XXX,XX (destaque maior)
+   - Label: "Lucro Líquido do Mês"
+   - Badge: % de variação vs mês anterior
+
+4. **Quilometragem**
+   - Ícone: Velocímetro roxo
+   - Valor: X.XXX km
+   - Label: "Quilômetros Rodados"
+   - Sublabel: "R$ X,XX por km"
+
+**Design:**
+- Cards com gradiente suave
+- Sombra leve para profundidade
+- Responsivo: 4 colunas desktop, 2 colunas tablet, 1 coluna mobile
+- Animação sutil ao carregar
+
+#### 2.2.3 Estatísticas Detalhadas
+**Seção 1: Estatísticas do Mês**
+- Dias trabalhados
+- Média de lucro por dia
+- Lucro por quilômetro
+- Melhor dia do mês (maior lucro)
+- Pior dia do mês (menor lucro)
+
+**Seção 2: Totais Acumulados (Desde o Cadastro)**
+- Faturamento total
+- Gastos totais
+- Lucro total
+- Quilometragem total
+- Total de dias trabalhados
+
+#### 2.2.4 Gráficos
+**Gráfico 1: Evolução Financeira (Linha)**
+- Últimos 30 dias
+- 3 Linhas: Faturamento (verde), Gastos (vermelho), Lucro (azul)
+- Eixo X: datas
+- Eixo Y: valores em R$
+- Tooltip ao passar mouse
+- Responsivo
+
+**Gráfico 2: Comparativo Diário (Barras)**
+- Últimos 30 dias
+- 2 Barras por dia: Faturamento vs Gastos
+- Cores: verde e vermelho
+- Tooltip com valores exatos
+
+**Gráfico 3: Distribuição de Gastos (Pizza) - Futuro**
+- Categorias de gastos
+- Percentual de cada categoria
+
+#### 2.2.5 Histórico de Registros
+**Tabela com colunas:**
+- Data
+- Faturamento (R$)
+- Gastos (R$)
+- Lucro (R$) - destacado em cor
+- Quilometragem (km)
+- Lucro/km (R$)
+- Ações: Editar | Excluir
+
+**Funcionalidades:**
+- Ordenação por qualquer coluna
+- Paginação: 20 registros por página
+- Filtro por período (última semana, mês, personalizado)
+- Busca por data específica
+- Exportar para Excel/PDF (futuro)
+
+---
+
+### 2.3 Formulário de Registro Diário
+
+#### 2.3.1 Modal/Tela de Registro
+**Campos:**
+1. **Data**
+   - Type: date
+   - Default: data atual
+   - Validação: não pode ser futura
+
+2. **Faturamento do Dia (R$)**
+   - Type: number (decimal)
+   - Placeholder: "0.00"
+   - Obrigatório
+   - Min: 0
+   - Máscara: R$ X.XXX,XX
+
+3. **Quilômetros Rodados**
+   - Type: number (decimal)
+   - Placeholder: "0"
+   - Obrigatório
+   - Min: 0
+   - Sufixo: "km"
+
+4. **Gastos do Dia (R$)**
+   - Type: number (decimal)
+   - Placeholder: "0.00"
+   - Obrigatório
+   - Min: 0
+   - Máscara: R$ X.XXX,XX
+   - Botão: "Detalhar gastos" (abre subcampos - futuro)
+
+**Subcampos de Gastos (Opcional - Fase 2):**
+- Combustível
+- Alimentação
+- Manutenção
+- Lavagem
+- Outros
+
+5. **Observações (Opcional)**
+   - Type: textarea
+   - Max: 200 caracteres
+   - Placeholder: "Ex: dia de chuva, tráfego intenso..."
+
+**Pré-visualização de Lucro:**
+- Mostrar em tempo real: "Lucro do dia: R$ XXX,XX"
+- Cor verde se positivo, vermelho se negativo
+
+**Botões:**
+- "Salvar Registro" (primário, destaque)
+- "Cancelar" (secundário)
+
+**Comportamento:**
+- Não permitir registros duplicados (mesma data)
+- Se já existe registro da data, perguntar se quer editar
+- Após salvar, mostrar mensagem de sucesso
+- Atualizar dashboard automaticamente
+- Fechar modal/voltar para dashboard
+
+---
+
+### 2.4 Perfil do Usuário
+
+#### 2.4.1 Informações Pessoais
+**Campos editáveis:**
+- Foto de perfil (upload de imagem)
+- Nome completo
+- E-mail (mostrar mas não permitir edição)
+- Celular
+- Cidade/Estado
+
+**Botão:**
+- "Salvar Alterações"
+
+#### 2.4.2 Configurações de Conta
+**Opções:**
+- Alterar senha
+  - Senha atual
+  - Nova senha
+  - Confirmar nova senha
+- Excluir conta (com confirmação dupla)
+
+#### 2.4.3 Preferências
+**Opções:**
+- Moeda: R$ (fixo por enquanto)
+- Formato de data: DD/MM/AAAA
+- Notificações por e-mail (on/off)
+  - Resumo semanal
+  - Resumo mensal
+  - Alertas de gastos altos
+
+---
+
+### 2.5 Recursos Adicionais (Fase 2)
+
+#### 2.5.1 Metas Financeiras
+- Definir meta mensal de lucro
+- Barra de progresso visual
+- Notificação ao atingir meta
+
+#### 2.5.2 Comparativo entre Plataformas
+- Registrar qual plataforma (Uber, 99, etc)
+- Comparar performance entre plataformas
+
+#### 2.5.3 Relatórios para IR
+- Exportar relatório anual formatado
+- Separação de receitas e despesas
+
+#### 2.5.4 Alertas Inteligentes
+- "Você está gastando X% a mais este mês"
+- "Seu lucro/km está abaixo da média"
+- "Melhor horário para trabalhar: XXh às XXh"
+
+---
+
+## 3. Requisitos Técnicos
+
+### 3.1 Frontend
+**Stack sugerida:**
+- React.js ou Next.js
+- Tailwind CSS (design system)
+- Recharts ou Chart.js (gráficos)
+- React Hook Form (formulários)
+- Axios (requisições)
+
+**Responsividade:**
+- Mobile-first design
+- Breakpoints: 320px, 768px, 1024px, 1440px
+- PWA (Progressive Web App) para funcionar como app no celular
+
+### 3.2 Backend
+**Stack sugerida:**
+- Node.js + Express ou Fastify
+- PostgreSQL ou MongoDB (banco de dados)
+- JWT para autenticação
+- Bcrypt para hash de senhas
+
+**APIs necessárias:**
+```
+POST   /api/auth/register
+POST   /api/auth/login
+POST   /api/auth/forgot-password
+POST   /api/auth/reset-password
+GET    /api/auth/me
+
+GET    /api/records (listar registros)
+POST   /api/records (criar registro)
+GET    /api/records/:id
+PUT    /api/records/:id
+DELETE /api/records/:id
+
+GET    /api/stats/monthly (estatísticas do mês)
+GET    /api/stats/total (estatísticas totais)
+GET    /api/stats/chart (dados para gráficos)
+
+GET    /api/user/profile
+PUT    /api/user/profile
+PUT    /api/user/password
+DELETE /api/user/account
+```
+
+### 3.3 Segurança
+- HTTPS obrigatório
+- Senhas com hash bcrypt (salt rounds: 10)
+- Tokens JWT com expiração (24h)
+- Refresh tokens (7 dias)
+- Rate limiting em todas as rotas
+- Sanitização de inputs
+- CORS configurado
+- Proteção contra SQL Injection
+- Validação de dados no backend
+
+### 3.4 Performance
+- Cache de dados do dashboard (5 minutos)
+- Lazy loading de gráficos
+- Paginação em listagens
+- Compressão de respostas (gzip)
+- CDN para assets estáticos
+- Otimização de imagens
+
+### 3.5 Banco de Dados
+
+**Tabela: users**
+```
+id (PK)
+name
+email (unique)
+password_hash
+phone
+city
+state
+photo_url
+created_at
+updated_at
+email_verified
+```
+
+**Tabela: records**
+```
+id (PK)
+user_id (FK)
+date (unique per user)
+revenue (faturamento)
+expenses (gastos)
+kilometers
+profit (calculated)
+notes
+created_at
+updated_at
+```
+
+**Tabela: password_resets**
+```
+id (PK)
+email
+token
+expires_at
+created_at
+```
+
+**Índices:**
+- users: email
+- records: user_id, date
+- records: user_id + date (composite)
+
+---
+
+## 4. Design e UX
+
+### 4.1 Paleta de Cores
+**Cores Principais:**
+- Primária: #4F46E5 (Indigo) - botões principais
+- Secundária: #06B6D4 (Cyan) - links, destaques
+- Sucesso: #10B981 (Green) - valores positivos, faturamento
+- Erro: #EF4444 (Red) - valores negativos, gastos
+- Aviso: #F59E0B (Amber) - alertas
+- Neutro: #6B7280 (Gray) - textos
+
+**Cores de Fundo:**
+- Fundo principal: #F9FAFB (cinza muito claro)
+- Cards: #FFFFFF (branco)
+- Gradientes suaves nos cards de estatísticas
+
+### 4.2 Tipografia
+**Fonte:**
+- Sans-serif moderna: Inter, Poppins ou Roboto
+- Tamanhos:
+  - H1: 2rem (32px) - Títulos principais
+  - H2: 1.5rem (24px) - Subtítulos
+  - H3: 1.25rem (20px) - Cards
+  - Body: 1rem (16px) - Textos
+  - Small: 0.875rem (14px) - Labels
+
+### 4.3 Componentes
+**Botões:**
+- Primário: fundo indigo, texto branco, hover mais escuro
+- Secundário: borda indigo, texto indigo, hover com fundo
+- Tamanho: padding 12px 24px, border-radius 8px
+
+**Inputs:**
+- Borda cinza clara
+- Focus: borda indigo, shadow indigo
+- Altura: 44px (fácil de tocar no mobile)
+- Border-radius: 8px
+
+**Cards:**
+- Fundo branco
+- Shadow suave: 0 1px 3px rgba(0,0,0,0.1)
+- Border-radius: 12px
+- Padding: 24px
+
+### 4.4 Ícones
+- Biblioteca: Lucide React ou Heroicons
+- Tamanho padrão: 20px-24px
+- Cor: mesma do texto ou temática
+
+### 4.5 Animações
+- Transições suaves: 200-300ms
+- Hover states em todos elementos clicáveis
+- Loading spinners durante requisições
+- Toast notifications para feedbacks
+- Skeleton loaders ao carregar dados
+
+### 4.6 Acessibilidade
+- Contraste mínimo WCAG AA (4.5:1)
+- Labels em todos inputs
+- Focus visible em elementos interativos
+- Textos alternativos em imagens
+- Navegação por teclado
+- Mensagens de erro descritivas
+
+---
+
+## 5. Fluxos de Usuário
+
+### 5.1 Primeiro Acesso
+1. Usuário acessa o site
+2. Vê tela de login
+3. Clica em "Cadastre-se"
+4. Preenche formulário de cadastro
+5. Recebe e-mail de boas-vindas
+6. Faz login automático
+7. Vê tutorial rápido (opcional)
+8. Dashboard vazio com call-to-action: "Registre seu primeiro dia"
+
+### 5.2 Registro Diário (Uso Principal)
+1. Usuário faz login
+2. Vê dashboard com dados anteriores
+3. Clica em "Novo Registro"
+4. Preenche: data, faturamento, km, gastos
+5. Vê pré-visualização do lucro
+6. Clica em "Salvar"
+7. Vê confirmação de sucesso
+8. Dashboard atualiza automaticamente com novos dados
+
+### 5.3 Consulta de Performance
+1. Usuário faz login
+2. Vê cards de resumo do mês
+3. Rola página e vê gráficos de evolução
+4. Analisa estatísticas detalhadas
+5. Consulta histórico completo na tabela
+6. Filtra por período se necessário
+
+---
+
+## 6. Critérios de Sucesso
+
+### 6.1 Métricas de Produto
+- Tempo médio de registro: < 60 segundos
+- Taxa de retenção semanal: > 40%
+- Frequência de uso: pelo menos 4x por semana
+- NPS (Net Promoter Score): > 50
+
+### 6.2 Métricas Técnicas
+- Tempo de carregamento da página: < 2 segundos
+- Disponibilidade: 99.5%
+- Taxa de erro: < 1%
+- Tempo de resposta da API: < 500ms
+
+### 6.3 KPIs de Negócio
+- Número de usuários ativos mensais
+- Número de registros criados por dia
+- Taxa de conversão (visitante → cadastro)
+- Custo de aquisição de usuário (CAC)
+
+---
+
+## 7. Roadmap de Desenvolvimento
+
+### Fase 1 (MVP - 4-6 semanas)
+✅ Autenticação completa (login, cadastro, recuperação)
+✅ Registro diário de dados
+✅ Dashboard com cards de resumo
+✅ Gráfico de evolução básico
+✅ Histórico de registros
+✅ Perfil do usuário
+
+### Fase 2 (2-3 semanas)
+- Detalhamento de gastos por categoria
+- Gráficos adicionais (pizza, comparativos)
+- Filtros avançados no histórico
+- Exportação de dados (Excel/PDF)
+- Notificações por e-mail
+
+### Fase 3 (3-4 semanas)
+- Metas financeiras
+- Comparativo entre plataformas
+- Alertas inteligentes
+- Relatórios para IR
+- App mobile nativo (iOS/Android)
+
+### Fase 4 (Expansão)
+- Integração com APIs de bancos
+- Importação automática de extratos
+- Comunidade de motoristas
+- Dicas personalizadas
+- Gamificação
+
+---
+
+## 8. Considerações Finais
+
+### 8.1 Diferenciais Competitivos
+- Interface extremamente simples e rápida
+- Foco em mobile (onde motorista mais usa)
+- Visual atraente mas profissional
+- Gratuito (monetização futura via premium features)
+
+### 8.2 Riscos e Mitigações
+**Risco:** Baixa adoção inicial
+**Mitigação:** Marketing em grupos de motoristas, oferecer período gratuito estendido
+
+**Risco:** Motoristas não têm hábito de registrar diariamente
+**Mitigação:** Notificações push, gamificação, mostrar valor (economize impostos)
+
+**Risco:** Concorrência com apps grandes
+**Mitigação:** Simplicidade como diferencial, foco em nicho específico
+
+### 8.3 Próximos Passos
+1. Validar protótipo com 10-20 motoristas reais
+2. Ajustar baseado em feedback
+3. Desenvolver MVP
+4. Lançar beta fechado
+5. Coletar métricas e iterar
+6. Lançamento público
+
+---
+
+## Anexos
+
+### Mockups
+- [Link para Figma/protótipo]
+
+### Benchmarks
+- Uber Driver App (referência de simplicidade)
+- QuickBooks Self-Employed (referência de relatórios)
+- Mint (referência de gráficos)
+
+### Requisitos de Infraestrutura
+- Hosting: Vercel/Netlify (frontend) + Railway/Render (backend)
+- Banco: PostgreSQL no Supabase ou Neon
+- Storage: Cloudinary (fotos de perfil)
+- E-mail: SendGrid ou Resend
+- Monitoramento: Sentry (erros) + Google Analytics (uso)

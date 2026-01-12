@@ -1,0 +1,2169 @@
+# PRD - Sistema de Controle Financeiro para Motoristas de Aplicativo
+## Versão Melhorada com Insights de Mercado
+
+---
+
+## 1. Visão Geral do Produto
+
+### 1.1 Objetivo
+Desenvolver um sistema web/mobile completo para motoristas de aplicativo controlarem suas finanças de forma inteligente e automatizada, permitindo não apenas o registro manual de dados, mas também captura automática de informações, definição de metas, e análises preditivas para maximizar lucros.
+
+### 1.2 Público-Alvo
+- **Primário:** Motoristas de aplicativo (Uber, 99, inDrive, Cabify, etc.)
+- **Secundário:** Motoristas autônomos, entregadores de apps (iFood, Rappi)
+- **Perfil detalhado:**
+  - Trabalham 8-12 horas por dia
+  - Precisam tomar decisões rápidas sobre quando/onde trabalhar
+  - Querem saber se o trabalho está sendo rentável
+  - Dificuldade com planilhas complexas
+  - Necessitam de informações para declaração de IR
+
+### 1.3 Problema a Resolver
+Motoristas enfrentam múltiplos desafios financeiros:
+- Não sabem o lucro real após todas as despesas
+- Dificuldade em organizar gastos para declaração de IR
+- Não conseguem identificar padrões de maior rentabilidade
+- Perdem tempo com controles manuais e planilhas
+- Falta visibilidade sobre custos operacionais reais por quilômetro
+
+### 1.4 Proposta de Valor
+**"Controle financeiro completo em menos de 1 minuto por dia, com inteligência para você ganhar mais"**
+
+- ⚡ Registro super rápido (< 60 segundos)
+- 📊 Dashboards visuais e intuitivos
+- 🎯 Sistema de metas com acompanhamento em tempo real
+- 🤖 Captura automática de dados (semáforo/acessibilidade)
+- 📈 Insights inteligentes sobre rentabilidade
+- 💰 Relatórios prontos para IR
+
+### 1.5 Diferenciais vs Concorrência (Análise DRIVH e Mercado)
+
+**Vantagens do DRIVH (a incorporar):**
+- Sistema de semáforo para captura automática
+- Categorização por tipo de corrida (UberX, UberBlack, 99Pop, etc.)
+- Metas visíveis na tela principal com progresso em tempo real
+- Comparativos mensais automáticos
+
+**Nossos Diferenciais Adicionais:**
+- Interface mais moderna e intuitiva
+- Análises preditivas e recomendações
+- Suporte a múltiplas plataformas simultaneamente
+- Relatórios fiscais automatizados
+- Comunidade e benchmarking anônimo
+
+---
+
+## 2. Funcionalidades do Sistema
+
+### 2.1 Autenticação e Cadastro
+
+#### 2.1.1 Tela de Login
+**Elementos:**
+- Logo do sistema (ícone de carro + cifrão) com animação sutil
+- Campo: E-mail com validação em tempo real
+- Campo: Senha com toggle "mostrar/ocultar"
+- Checkbox: "Lembrar-me por 30 dias"
+- Botão: "Entrar" (destaque, cor primária, full-width mobile)
+- Link: "Esqueci minha senha"
+- Link: "Não tem conta? Cadastre-se grátis"
+- **NOVO:** Botão de login social (Google) para onboarding mais rápido
+
+**Validações:**
+- E-mail: formato válido, mensagem instantânea
+- Senha: mínimo 6 caracteres
+- Rate limiting: máximo 5 tentativas em 15 minutos
+- Bloqueio temporário após tentativas falhas
+
+**Comportamento:**
+- Loading elegante durante autenticação (skeleton)
+- Mensagens de erro humanizadas ("E-mail ou senha incorretos" ao invés de "Credenciais inválidas")
+- Redirect inteligente: se veio de uma página específica, volta para ela
+- Suporte a biometria (Touch ID/Face ID) em apps nativos
+
+#### 2.1.2 Tela de Cadastro Rápido
+**Elementos:**
+- **Passo 1 - Dados Básicos:**
+  - Nome completo
+  - E-mail (com validação de domínio)
+  - Senha (indicador de força em tempo real)
+  - Confirmar senha
+
+- **Passo 2 - Perfil de Motorista (NOVO):**
+  - Plataformas que trabalha (checkbox múltiplo: Uber, 99, inDrive, Cabify, etc.)
+  - Tipo de veículo (Sedan, SUV, Hatch, Moto)
+  - Cidade/Estado (autocompletar)
+  - Ano que começou a trabalhar
+
+- **NOVO: Passo 3 - Configuração Inicial Rápida:**
+  - Meta mensal desejada (R$)
+  - Média de dias trabalhados por semana
+  - Principal motivação (ganhar mais, organizar finanças, IR)
+
+**Validações:**
+- Nome: mínimo 3 caracteres
+- E-mail: formato válido, único no sistema, verificação de domínio
+- Senha: 
+  - Mínimo 8 caracteres (aumentado de 6)
+  - Deve conter letra maiúscula, minúscula e número
+  - Indicador visual de força (fraca, média, forte)
+- Plataformas: pelo menos 1 selecionada
+- Termos: obrigatório aceitar
+
+**Comportamento:**
+- Indicador de progresso (1/3, 2/3, 3/3)
+- Salvamento automático entre passos
+- Opção de pular Passo 3 e configurar depois
+- E-mail de boas-vindas com dicas rápidas
+- Tutorial interativo no primeiro acesso (pode pular)
+
+#### 2.1.3 Recuperação de Senha
+**Elementos:**
+- Ilustração amigável (cadeado)
+- Campo: E-mail cadastrado
+- Botão: "Enviar link de recuperação"
+- Mensagem de confirmação com timer (reenviar em 60s)
+
+**Comportamento:**
+- E-mail enviado com link válido por 2 horas (aumentado de 1h)
+- Link com token seguro (JWT)
+- Página de redefinição: Nova senha + Confirmar
+- Validação de força da nova senha
+- Após redefinir: auto-login e notificação de sucesso
+- Log de segurança: notificar por e-mail sobre troca de senha
+
+---
+
+### 2.2 Dashboard Principal (Tela Inicial)
+
+#### 2.2.1 Header Fixo
+**Elementos:**
+- Logo/Nome do sistema (esqueda)
+- **NOVO:** Badge de notificações (alertas, dicas)
+- **NOVO:** Seletor de período rápido (Hoje | Esta Semana | Este Mês | Personalizado)
+- Nome do usuário + foto miniatura
+- Botão: "➕ Novo Registro" (sempre visível, sticky no mobile, cor primária)
+- Menu dropdown do usuário:
+  - Meu Perfil
+  - Minhas Metas
+  - Configurações
+  - Central de Ajuda (NOVO)
+  - Sair
+
+#### 2.2.2 Banner de Meta (NOVO - Inspirado no DRIVH)
+**Posicionamento:** Logo abaixo do header, antes dos cards
+
+**Elementos:**
+- Título: "Meta de [Mês Atual]"
+- Valor meta: R$ X.XXX,XX
+- Progresso visual:
+  - Barra de progresso colorida (verde quando >80%, amarelo 50-80%, vermelho <50%)
+  - Percentual alcançado: "78% concluído"
+- Informações contextuais:
+  - "Faltam R$ XXX para sua meta"
+  - "Você está X% acima/abaixo da média do mês passado"
+- Botão: "Ajustar Meta"
+
+**Comportamento:**
+- Atualização em tempo real ao adicionar registros
+- Animação sutil de preenchimento da barra
+- Notificação festiva ao atingir 100%
+- Se não há meta definida, mostrar call-to-action para criar
+
+#### 2.2.3 Cards de Resumo do Período Selecionado
+**4 Cards Principais com Evolução:**
+
+**1. Faturamento Bruto**
+- Ícone: 💰 (cifrão verde pulsante)
+- Valor principal: R$ X.XXX,XX (fonte grande, bold)
+- **NOVO:** Subdivisão por plataforma:
+  - Uber: R$ XXX (XX%)
+  - 99: R$ XXX (XX%)
+  - Outras: R$ XXX (XX%)
+- Badge de comparação: 
+  - "↗ +15% vs mês anterior" (verde)
+  - "↘ -8% vs mês anterior" (vermelho)
+- Mini gráfico sparkline (últimos 7 dias)
+
+**2. Despesas Totais**
+- Ícone: ⛽ (bomba de combustível vermelha)
+- Valor principal: R$ X.XXX,XX
+- **NOVO:** Breakdown por categoria:
+  - Combustível: R$ XXX (XX%)
+  - Manutenção: R$ XXX (XX%)
+  - Alimentação: R$ XXX (XX%)
+  - Outros: R$ XXX (XX%)
+- Badge: % de variação vs período anterior
+- Alerta se despesas > 50% do faturamento
+- Mini gráfico sparkline
+
+**3. Lucro Líquido (Destaque Principal)**
+- Ícone: 📈 (gráfico crescente azul/verde)
+- Valor principal: R$ X.XXX,XX (fonte 30% maior que outros cards)
+- Cor dinâmica: verde se positivo, vermelho se negativo
+- **NOVO:** Margem de lucro: "XX% de margem"
+- **NOVO:** Comparativo inteligente:
+  - "Melhor resultado dos últimos 3 meses! 🎉"
+  - "Abaixo da sua média, mas você consegue! 💪"
+- Badge: % de variação
+- Mini gráfico sparkline
+
+**4. Quilometragem & Eficiência**
+- Ícone: 🚗 (velocímetro roxo)
+- Valor principal: X.XXX km
+- **NOVO:** Métricas de eficiência:
+  - Lucro por km: R$ X,XX/km
+  - Custo por km: R$ X,XX/km
+  - Faturamento por km: R$ X,XX/km
+- Badge: variação vs período anterior
+- **NOVO:** Indicador de eficiência:
+  - ⭐⭐⭐⭐⭐ (5 estrelas se lucro/km > R$3)
+  - Texto motivacional baseado na performance
+
+**Design dos Cards:**
+- Gradiente suave de fundo (ex: verde claro → verde escuro no card de faturamento)
+- Sombra com profundidade (shadow-lg)
+- Border-radius: 16px
+- Padding generoso: 24px
+- Hover effect: leve elevação (transform: translateY(-4px))
+- Loading skeleton enquanto carrega dados
+- Animação de contagem ao exibir valores (count-up effect)
+- **Responsividade:**
+  - Desktop: 4 colunas
+  - Tablet: 2x2 grid
+  - Mobile: 1 coluna, scroll vertical
+
+#### 2.2.4 Seção de Insights Inteligentes (NOVO)
+**Posicionamento:** Entre cards e gráficos
+
+**Card de Dicas Personalizadas:**
+- Ícone: 💡 (lâmpada)
+- Título: "Insights da Semana"
+- Carrossel de dicas baseadas em dados:
+  - "Terças-feiras são seus dias mais lucrativos! Média de R$ XXX"
+  - "Seu custo por km aumentou 12% este mês. Verifique manutenção."
+  - "Você trabalhou 3 dias a menos que o usual. Meta ajustada!"
+  - "Motoristas na sua região faturam 8% a mais entre 18h-22h"
+
+**Algoritmo de Insights:**
+- Análise de padrões históricos do usuário
+- Comparação com benchmarks anônimos da região
+- Identificação de anomalias (gastos incomuns, queda de rendimento)
+- Sugestões acionáveis (quando trabalhar, onde economizar)
+
+#### 2.2.5 Estatísticas Detalhadas
+**Seção 1: Performance do Período (Mês/Semana)**
+- Dias trabalhados no período
+- Média de lucro por dia: R$ XXX
+- Melhor dia: DD/MM (R$ XXX) 🏆
+- Pior dia: DD/MM (R$ XXX) 
+- Horas estimadas trabalhadas (NOVO - baseado em km e média)
+- Lucro por hora: R$ XX/h (NOVO)
+- **NOVO:** Taxa de ocupação estimada: XX% (baseado em km e tempo)
+
+**Seção 2: Comparativos Mensais (NOVO)**
+- Tabela de comparação dos últimos 6 meses:
+  | Mês | Faturamento | Gastos | Lucro | Dias | Lucro/Dia |
+  - Destaque para mês atual
+  - Indicadores visuais de crescimento/queda
+
+**Seção 3: Totais Acumulados (Desde o Cadastro)**
+- Faturamento total: R$ XX.XXX
+- Gastos totais: R$ XX.XXX
+- **Lucro total acumulado: R$ XX.XXX** (destaque especial)
+- Quilometragem total: XX.XXX km
+- Total de dias trabalhados: XXX dias
+- **NOVO:** Economia estimada em impostos (baseado em gastos documentados)
+
+#### 2.2.6 Gráficos Avançados
+
+**Gráfico 1: Evolução Financeira Completa (Linha)**
+- Período: configurável (7, 15, 30, 90 dias, ano completo)
+- 3 Linhas principais:
+  - Faturamento (verde sólida, espessura 3px)
+  - Gastos (vermelho sólida, espessura 3px)
+  - Lucro (azul sólida, espessura 4px - destaque)
+- **NOVO:** Área preenchida entre faturamento e gastos (lucro)
+- Eixo X: datas formatadas (DD/MM)
+- Eixo Y: valores em R$ com abreviação (R$ 2,5k)
+- Tooltip interativo ao hover:
+  - Data completa
+  - Valores exatos
+  - % em relação à média
+- Marcadores especiais:
+  - 🎯 Dias que bateram a meta diária
+  - ⚠️ Dias com gastos acima do normal
+- Zoom e pan (scroll para zoom, arrastar para pan)
+- Exportar gráfico como imagem (PNG)
+
+**Gráfico 2: Comparativo Diário (Barras Agrupadas)**
+- Período: últimos 30 dias (personalizável)
+- 2 Barras por dia lado a lado:
+  - Faturamento (verde, 60% opacidade)
+  - Gastos (vermelho, 60% opacidade)
+- Linha sobreposta: Lucro (azul)
+- Tooltip detalhado:
+  - Data
+  - Faturamento: R$ XXX
+  - Gastos: R$ XXX
+  - Lucro: R$ XXX
+  - Margem: XX%
+- Filtro rápido: "Mostrar apenas dias trabalhados"
+- Destaque visual nos finais de semana
+
+**Gráfico 3: Distribuição de Gastos (Pizza/Donut)**
+- Categorias de gastos com cores distintas:
+  - Combustível (laranja): XX%
+  - Manutenção (roxo): XX%
+  - Alimentação (amarelo): XX%
+  - Lavagem (azul claro): XX%
+  - Pedágios (rosa): XX%
+  - Outros (cinza): XX%
+- Centro do donut: "Total de Gastos: R$ X.XXX"
+- Legenda interativa (click para destacar fatia)
+- Animação de entrada (desenhar fatias)
+- Comparação com mês anterior ao lado
+
+**Gráfico 4: Performance por Plataforma (NOVO - Barras Horizontais)**
+- Comparação entre Uber, 99, Cabify, etc:
+  - Faturamento total por plataforma
+  - Lucro médio por corrida
+  - Número de corridas (se disponível)
+- Ordenado por lucratividade
+- Tooltip com detalhes completos
+- Insight automático: "99 é 15% mais lucrativo para você"
+
+**Gráfico 5: Heatmap de Rentabilidade (NOVO - Fase 2)**
+- Calendário visual dos últimos 90 dias
+- Cor por lucro: verde intenso (alto) → amarelo (médio) → vermelho (baixo)
+- Hover mostra detalhes do dia
+- Identificação visual de padrões (ex: quintas sempre melhores)
+
+#### 2.2.7 Histórico de Registros (Tabela Aprimorada)
+**Cabeçalho da Tabela:**
+- Botões de ação:
+  - "➕ Novo Registro"
+  - "📊 Exportar" (Excel/CSV/PDF)
+  - "🔍 Filtros Avançados"
+  - "⚙️ Personalizar Colunas"
+
+**Colunas (personalizáveis):**
+1. Data (DD/MM/AAAA) - sort padrão descendente
+2. Dia da Semana (NOVO) - badge colorido
+3. Plataforma(s) (NOVO) - chips múltiplos se mais de uma
+4. Faturamento (R$) - verde, bold
+5. Gastos (R$) - vermelho
+6. Lucro (R$) - destaque, cor dinâmica (verde/vermelho)
+7. Margem (%) (NOVO) - badge colorido
+8. Quilometragem (km)
+9. Lucro/km (R$) - métrica chave
+10. **NOVO:** Horas Trabalhadas (estimado ou manual)
+11. **NOVO:** Número de Corridas (se informado)
+12. Observações - preview (expandir ao click)
+13. Ações:
+    - ✏️ Editar
+    - 📋 Duplicar (NOVO)
+    - 🗑️ Excluir
+
+**Funcionalidades Avançadas:**
+- **Ordenação:** por qualquer coluna (ASC/DESC)
+- **Paginação:** 20, 50, 100 registros por página
+- **Busca inteligente:** por data, valor, observação
+- **Filtros Múltiplos:**
+  - Período: última semana, mês, trimestre, ano, customizado
+  - Plataforma específica
+  - Dias da semana
+  - Faixa de lucro
+  - Com/sem observações
+- **Seleção Múltipla:**
+  - Checkbox para selecionar vários registros
+  - Ações em lote: excluir, exportar selecionados
+- **Totalizadores:**
+  - Linha de totais ao final da tabela
+  - Totais dos registros filtrados
+- **Visualização:**
+  - Modo compacto/expandido
+  - Destaque de linhas ao hover
+  - Cores alternadas (zebra striping)
+- **Inline Editing:** edição rápida sem modal
+- **Atalhos de Teclado:**
+  - N: Novo registro
+  - /: Focar busca
+  - ↑↓: Navegar registros
+
+---
+
+### 2.3 Formulário de Registro Diário Aprimorado
+
+#### 2.3.1 Modal de Registro Inteligente
+**Layout Responsivo:**
+- Desktop: Modal centralizado (600px largura)
+- Mobile: Full-screen overlay com animação slide-up
+
+**Cabeçalho do Modal:**
+- Título: "Registrar Dia de Trabalho"
+- Subtitle: Data selecionada formatada
+- Botão fechar (X) no canto superior direito
+
+**Seção 1: Informações Básicas**
+
+**Campo: Data**
+- Type: date picker moderno
+- Default: hoje
+- Validação: não pode ser futura, não pode duplicar
+- Atalhos: "Hoje", "Ontem", "Anteontem"
+- Indicador visual se já existe registro
+
+**Campo: Plataformas Utilizadas (NOVO)**
+- Checkbox múltipla com ícones:
+  - ☑️ Uber
+  - ☑️ 99
+  - ☑️ inDrive
+  - ☑️ Cabify
+  - ☑️ Outros
+- Permite selecionar múltiplas
+- Salva preferência para próximos registros
+
+**Seção 2: Ganhos**
+
+**Campo: Faturamento Total do Dia**
+- Input com máscara de moeda: R$ 0,00
+- Type: number com 2 decimais
+- Placeholder: "R$ 0,00"
+- Obrigatório
+- Min: 0
+- **NOVO:** Opção de detalhar por plataforma (expandir):
+  - Uber: R$ XXX
+  - 99: R$ XXX
+  - Total calculado automaticamente
+
+**Campo: Número de Corridas (NOVO - Opcional)**
+- Type: number inteiro
+- Placeholder: "Quantas corridas realizou?"
+- Calcula automaticamente: ticket médio (faturamento/corridas)
+- Mostra em tempo real: "Média de R$ XX por corrida"
+
+**Seção 3: Custos**
+
+**Campo: Quilometragem**
+- Type: number com 1 decimal
+- Placeholder: "0 km"
+- Obrigatório
+- Min: 0
+- Max razoável: 1000km (aviso se exceder)
+- Sufixo fixo: "km"
+- **NOVO:** Opção de estimar baseado em horas (toggle)
+
+**Campo: Gastos Totais**
+- Input com máscara: R$ 0,00
+- Obrigatório
+- Min: 0
+- Botão: "💳 Detalhar Gastos" (toggle expansão)
+
+**Subcampos de Gastos (Expansível):**
+Quando "Detalhar Gastos" ativado, exibir:
+
+1. **Combustível** ⛽
+   - R$ 0,00
+   - Sugestão baseada em média: "Usual: ~R$ XXX"
+   
+2. **Manutenção** 🔧
+   - R$ 0,00
+   - Exemplos: troca de óleo, pneus, etc.
+
+3. **Alimentação** 🍔
+   - R$ 0,00
+   
+4. **Lavagem** 🚿
+   - R$ 0,00
+
+5. **Pedágios** 🛣️
+   - R$ 0,00
+
+6. **Estacionamento** 🅿️
+   - R$ 0,00
+
+7. **Outros** 📦
+   - R$ 0,00
+   - Campo de texto: "Especificar"
+
+**Total dos gastos detalhados:** R$ XXX,XX (auto-calculado)
+- Botão: "Usar este valor" (preenche campo de Gastos Totais)
+
+**Seção 4: Informações Complementares (NOVO)**
+
+**Campo: Horas Trabalhadas**
+- Type: time ou number
+- Formato: "8h 30min" ou "8.5"
+- Opcional mas recomendado
+- Ajuda a calcular: lucro por hora
+- Sugestão baseada em km: "Estimamos ~X horas"
+
+**Campo: Horário de Trabalho (NOVO - Opcional)**
+- Início: HH:MM
+- Fim: HH:MM
+- Calcula horas automaticamente
+- Útil para análise de rentabilidade por período
+
+**Campo: Observações**
+- Type: textarea
+- Max: 300 caracteres (aumentado de 200)
+- Placeholder: "Ex: chuva intensa, evento na cidade, trânsito pesado..."
+- Contador de caracteres
+- **NOVO:** Tags rápidas (click para adicionar):
+  - 🌧️ Chuva
+  - 🚦 Trânsito
+  - 🎉 Evento
+  - 😴 Pouco movimento
+  - 🔥 Dia excelente
+
+**Seção 5: Pré-visualização em Tempo Real**
+
+**Card de Resumo (sidebar ou bottom):**
+- Fundo levemente destacado
+- Atualiza conforme usuário preenche:
+
+```
+📊 RESUMO DO DIA
+
+Faturamento: R$ 350,00
+(-) Gastos: R$ 120,00
+━━━━━━━━━━━━━━━━━━
+= Lucro: R$ 230,00 ✅
+
+Margem: 65,7%
+Lucro/km: R$ 1,92/km
+Lucro/hora: R$ 28,75/h
+
+🎯 Meta diária: R$ 200,00
+Você SUPEROU a meta em 15%! 🎉
+```
+
+**Indicadores Visuais:**
+- Cor verde se lucro positivo
+- Cor vermelha se negativo
+- Emoji motivacional baseado em performance
+- Comparação com meta diária automática
+
+**Validações e Alertas:**
+- ⚠️ "Seus gastos estão acima de 50% do faturamento"
+- ⚠️ "Lucro/km está abaixo da sua média (R$ X,XX)"
+- ✅ "Ótimo! Melhor resultado da semana"
+
+**Botões de Ação:**
+- **"💾 Salvar Registro"** (primário, destaque)
+  - Verde, bold, full-width mobile
+  - Loading state ao salvar
+  - Desabilitado se campos obrigatórios vazios
+  
+- **"Cancelar"** (secundário, outline)
+  - Confirmação se há dados preenchidos
+
+**Após Salvar:**
+1. Animação de sucesso (checkmark)
+2. Toast notification: "Registro salvo com sucesso! ✅"
+3. **NOVO:** Opções rápidas:
+   - "Adicionar outro dia"
+   - "Ver no histórico"
+   - "Voltar ao dashboard"
+4. Dashboard atualiza automaticamente (sem reload)
+5. Se atingiu meta, mostrar celebração 🎉
+
+**Funcionalidades Especiais:**
+
+**1. Auto-save (NOVO):**
+- Salva rascunho automaticamente a cada 30s
+- Notificação discreta: "Rascunho salvo"
+- Recupera dados se fechar modal acidentalmente
+
+**2. Duplicar Registro Anterior:**
+- Botão: "Copiar dados de ontem"
+- Preenche todos os campos (exceto data)
+- Usuário só ajusta os valores
+
+**3. Templates de Registro (NOVO - Fase 2):**
+- Salvar configuração frequente como template
+- Ex: "Dia típico de semana", "Fim de semana"
+- Click para carregar template
+
+---
+
+### 2.4 Sistema de Metas (NOVO - Inspirado no DRIVH)
+
+#### 2.4.1 Tela de Metas
+**Acesso:** Menu principal > "Minhas Metas" ou botão "Ajustar Meta" no banner
+
+**Layout:**
+
+**Seção 1: Meta Mensal Ativa**
+- Card destacado com a meta atual do mês
+- Progresso visual grande (barra ou circular)
+- Informações:
+  - Meta: R$ X.XXX
+  - Alcançado: R$ X.XXX (XX%)
+  - Faltam: R$ XXX
+  - Dias restantes no mês: XX dias
+  - Necessário por dia: R$ XXX/dia
+- **NOVO:** Projeção inteligente:
+  - "Mantendo sua média, você deve alcançar R$ X.XXX (XXX% da meta)"
+  - "Para bater a meta, trabalhe mais X dias"
+- Botão: "Editar Meta"
+
+**Seção 2: Histórico de Metas**
+- Tabela dos últimos 6 meses:
+  | Mês | Meta | Alcançado | % | Status |
+  - Status: ✅ Atingida, ⚠️ Parcial, ❌ Não atingida
+- Gráfico de linha: evolução de metas vs realizado
+
+**Seção 3: Metas Personalizadas (Fase 2)**
+- Além da meta mensal, criar metas específicas:
+  - Meta semanal
+  - Meta por plataforma
+  - Meta de economia (reduzir gastos X%)
+  - Meta de eficiência (lucro/km > R$ X)
+
+#### 2.4.2 Configuração de Meta
+**Modal de Edição:**
+
+**Campo: Valor da Meta Mensal**
+- Input: R$ 0,00
+- Sugestões baseadas em histórico:
+  - "Sua média dos últimos 3 meses: R$ X.XXX"
+  - "Sugestão: R$ X.XXX (10% acima da média)"
+- Validação: deve ser positivo
+
+**Campo: Meta Diária Automática**
+- Calculado automaticamente
+- Leva em conta dias úteis restantes
+- Recalcula diariamente
+- Exemplo: "Meta diária: R$ 250 (baseado em 22 dias úteis)"
+
+**Opções Avançadas:**
+- Ajustar dias de trabalho esperados no mês
+- Excluir finais de semana do cálculo
+- Considerar feriados
+
+**Notificações de Meta:**
+- ☑️ Notificar quando atingir 50% da meta
+- ☑️ Notificar quando atingir 100% da meta
+- ☑️ Alerta se estiver abaixo do esperado (meio do mês)
+
+**Botões:**
+- "Salvar Meta"
+- "Cancelar"
+
+---
+
+### 2.5 Perfil do Usuário
+
+#### 2.5.1 Informações Pessoais
+**Campos editáveis:**
+- Foto de perfil (upload de imagem, crop integrado)
+- Nome completo
+- E-mail (visualizar apenas, não editável)
+- Celular (com validação)
+- Cidade/Estado (autocomplete)
+- **NOVO:** Tipo de veículo (Sedan, SUV, Hatch, Moto)
+- **NOVO:** Ano de início como motorista
+- **NOVO:** Plataformas principais (múltipla escolha)
+
+**Botão:**
+- "Salvar Alterações"
+- Feedback visual de salvamento
+
+#### 2.5.2 Configurações de Conta
+**Opções:**
+- **Alterar senha:**
+  - Senha atual (obrigatório)
+  - Nova senha (validação de força)
+  - Confirmar nova senha
+  - Botão: "Atualizar Senha"
+  
+- **Autenticação em dois fatores (NOVO - Fase 2):**
+  - Toggle on/off
+  - SMS ou App autenticador
+  
+- **Sessões ativas (NOVO):**
+  - Listar dispositivos conectados
+  - Opção de desconectar todos
+  
+- **Excluir conta:**
+  - Confirmação dupla com senha
+  - Aviso sobre perda permanente de dados
+  - Período de graça de 30 dias (recuperação)
+
+#### 2.5.3 Preferências do Sistema
+**Opções:**
+
+**Regionalização:**
+- Moeda: R$ (BRL) - preparado para expansão
+- Formato de data: DD/MM/AAAA
+- Formato de número: 1.234,56 (brasileiro)
+
+**Notificações:**
+- **Por E-mail:**
+  - ☑️ Resumo semanal de performance
+  - ☑️ Resumo mensal detalhado
+  - ☑️ Alertas de gastos acima do normal
+  - ☑️ Lembretes de registro pendente
+  - ☑️ Conquistas e marcos atingidos
+  - ☑️ Dicas personalizadas
+
+- **Push (App Mobile - Fase 3):**
+  - ☑️ Lembrete diário para registrar
+  - ☑️ Notificação ao atingir meta
+  - ☑️ Insights semanais
+
+**Interface:**
+- Tema: Claro | Escuro | Automático (NOVO)
+- Idioma: Português (preparar para multi-idioma)
+
+**Privacidade (NOVO):**
+- ☑️ Participar de benchmarking anônimo
+- ☑️ Compartilhar dados para melhorias
+- Visualizar dados coletados
+
+---
+
+### 2.6 Recursos Adicionais Prioritários
+
+#### 2.6.1 Captura Automática de Dados (NOVO - Diferencial Competitivo)
+**Inspirado no sistema "Semáforo" do DRIVH**
+
+**Funcionalidade:**
+- Utiliza serviço de acessibilidade (Android)
+- Monitora apps de motorista em segundo plano
+- Captura automaticamente:
+  - Valor de cada corrida
+  - Quilometragem percorrida
+  - Tipo de corrida (UberX, 99Pop, etc.)
+  - Horário de início/fim
+
+**Interface:**
+- Toggle on/off nas configurações
+- Tutorial de ativação das permissões
+- Indicador de status: "Captura ativa 🟢"
+- Log de corridas capturadas (revisão antes de salvar)
+
+**Privacidade:**
+- Dados processados localmente
+- Não envia informações para servidor sem consentimento
+- Usuário sempre confirma antes de registrar
+
+**Limitações:**
+- Disponível inicialmente apenas para Android
+- Requer permissões de acessibilidade
+- Funciona com Uber e 99 (expandir para outras plataformas)
+
+#### 2.6.2 Relatórios Fiscais para IR (DIFERENCIAL)
+**Acesso:** Menu > "Relatórios" > "Imposto de Renda"
+
+**Funcionalidades:**
+
+**1. Relatório Anual Completo**
+- Exportação em formato aceito pela Receita Federal
+- Separação clara:
+  - Receitas tributáveis (faturamento total)
+  - Despesas dedutíveis (combustível, manutenção, etc.)
+  - Lucro líquido
+- Formato: PDF profissional + CSV para importação
+
+**2. Categorização Fiscal Automática**
+- Gastos já categorizados conforme legislação
+- Indicação de quais despesas são dedutíveis
+- Cálculo estimado de imposto devido
+
+**3. Documentação**
+- Checklist do que você precisa declarar
+- Links para tutoriais da Receita Federal
+- Avisos importantes sobre MEI vs Autônomo
+
+**4. Mensalidade de Carnê-Leão (para autônomos)**
+- Cálculo automático mensal
+- Geração de DARF
+- Histórico de pagamentos
+
+**Design:**
+- Interface simples e clara
+- Wizard guiado para primeira vez
+- Possibilidade de contratar contador parceiro (monetização futura)
+
+#### 2.6.3 Comparativo de Plataformas (NOVO)
+**Tela dedicada para análise de rentabilidade por app**
+
+**Visualizações:**
+
+**1. Ranking de Rentabilidade**
+- Tabela ordenada:
+  | Plataforma | Faturamento | Lucro | Corridas | Lucro/Corrida |
+- Destaque para a mais lucrativa
+
+**2. Gráficos Comparativos**
+- Barras: faturamento total por plataforma
+- Pizza: distribuição percentual
+- Linha: evolução mensal por plataforma
+
+**3. Insights Automáticos**
+- "Uber representa 65% do seu faturamento"
+- "99 tem melhor lucro médio por corrida: R$ 25"
+- "inDrive teve crescimento de 30% este mês"
+
+**4. Recomendações**
+- "Considere focar mais em [Plataforma X] nas quintas-feiras"
+- "Você trabalha pouco com [Plataforma Y] que tem boas avaliações"
+
+#### 2.6.4 Alertas Inteligentes (Sistema Proativo)
+**Algoritmo de Monitoramento Contínuo**
+
+**Tipos de Alertas:**
+
+**1. Alertas de Performance**
+- 📉 "Seu lucro/km caiu 15% esta semana"
+- 📈 "Você está tendo sua melhor semana do mês!"
+- ⚠️ "Gastos com combustível 20% acima da média"
+
+**2. Alertas de Oportunidade**
+- 💡 "Segundas-feiras são 18% mais lucrativas para você"
+- 🎯 "Faltam apenas R$ 85 para sua meta semanal"
+- ⏰ "Seus melhores horários: 17h-21h"
+
+**3. Alertas de Manutenção**
+- 🔧 "Atingiu 5.000km desde último registro de manutenção"
+- 🛞 "Próxima troca de óleo estimada em 200km"
+
+**4. Alertas Comparativos (Benchmark)**
+- 📊 "Motoristas da sua região faturam 12% a mais às sextas"
+- 🚗 "Seu lucro/km está 8% acima da média local"
+
+**Configuração:**
+- Frequência de alertas (diário, semanal)
+- Tipos de alertas ativos
+- Canal (push, e-mail, in-app)
+
+**Interface:**
+- Central de notificações no header
+- Badge com número de alertas não lidos
+- Histórico de alertas
+- Ação rápida em cada alerta
+
+#### 2.6.5 Benchmarking Anônimo (NOVO - Gamificação)
+**Recurso Premium / Fase 2**
+
+**Funcionalidade:**
+- Comparação anônima com outros motoristas
+- Filtros: mesma cidade, mesmo tipo de veículo, mesma plataforma
+- Métricas comparadas:
+  - Lucro médio diário
+  - Lucro por km
+  - Eficiência operacional (lucro/gastos)
+  - Dias trabalhados por mês
+
+**Visualização:**
+- Gráfico de distribuição (onde você se posiciona)
+- Percentil: "Você está no top 25% de motoristas da sua região"
+- Evolução do ranking ao longo do tempo
+
+**Privacidade:**
+- Dados 100% anônimos
+- Opt-in voluntário
+- Pode desativar a qualquer momento
+
+**Gamificação:**
+- Conquistas desbloqueáveis:
+  - 🏆 "Top 10% do mês"
+  - 🎯 "10 dias consecutivos atingindo meta"
+  - 📈 "Crescimento de 20% no trimestre"
+  - ⭐ "100 dias trabalhados"
+- Badge no perfil
+- Compartilhamento social (opcional)
+
+---
+
+### 2.7 Exportação e Integração de Dados
+
+#### 2.7.1 Exportação Avançada
+**Formatos Disponíveis:**
+- **Excel (.xlsx):** planilha formatada com gráficos
+- **CSV:** dados brutos para análise externa
+- **PDF:** relatório visual e profissional
+- **JSON:** para integrações (API)
+
+**Opções de Exportação:**
+- Período personalizado
+- Filtros aplicados
+- Colunas selecionadas
+- Incluir/excluir gráficos
+- Modelo de relatório (simples, detalhado, fiscal)
+
+**Templates de Relatório:**
+1. **Relatório Mensal Completo**
+   - Resumo executivo
+   - Gráficos principais
+   - Tabela de registros
+   - Análise de tendências
+
+2. **Relatório de Gastos**
+   - Breakdown detalhado de categorias
+   - Comparativo com mês anterior
+   - Recomendações de economia
+
+3. **Relatório Fiscal (IR)**
+   - Formato adequado para contador
+   - Receitas e despesas segregadas
+   - Documentação de suporte
+
+4. **Extrato para Financiamento**
+   - Comprovação de renda
+   - Histórico de 3-12 meses
+   - Médias e totais
+
+#### 2.7.2 Importação de Dados (NOVO - Facilitar Migração)
+**Formatos Aceitos:**
+- Excel (.xlsx, .xls)
+- CSV
+- Google Sheets (link público)
+
+**Processo:**
+1. Upload do arquivo
+2. Mapeamento de colunas:
+   - Data → coluna X
+   - Faturamento → coluna Y
+   - etc.
+3. Preview dos dados
+4. Validação automática
+5. Confirmação e importação
+
+**Validações:**
+- Datas válidas e não duplicadas
+- Valores numéricos positivos
+- Campos obrigatórios preenchidos
+
+**Feedback:**
+- Barra de progresso
+- Relatório de importação:
+  - X registros importados com sucesso
+  - Y registros com erro (lista de erros)
+- Opção de rollback em caso de problema
+
+---
+
+## 3. Requisitos Técnicos Aprimorados
+
+### 3.1 Frontend
+
+**Stack Recomendada (Moderna):**
+- **Framework:** Next.js 14+ (App Router)
+  - Server Components para performance
+  - API Routes integradas
+  - Otimização automática de imagens
+  
+- **UI/Styling:**
+  - Tailwind CSS 3+ (utility-first)
+  - shadcn/ui (componentes prontos e customizáveis)
+  - Framer Motion (animações fluidas)
+  
+- **Gráficos:**
+  - Recharts (gráficos responsivos React)
+  - Chart.js + react-chartjs-2 (alternativa)
+  - D3.js para visualizações complexas (Fase 2)
+  
+- **Formulários:**
+  - React Hook Form (performance)
+  - Zod (validação TypeScript-first)
+  
+- **Estado:**
+  - Zustand ou Jotai (state management leve)
+  - React Query/TanStack Query (cache de dados)
+  
+- **Requisições:**
+  - Axios com interceptors
+  - SWR (React Hooks para data fetching)
+
+**Progressive Web App (PWA):**
+- Manifest.json configurado
+- Service Worker para offline
+- Instalável no celular
+- Ícones em todas resoluções
+- Splash screens customizadas
+
+**Performance:**
+- Lighthouse score > 90
+- First Contentful Paint < 1.5s
+- Time to Interactive < 3s
+- Lazy loading de componentes pesados
+- Code splitting por rota
+- Image optimization (WebP, AVIF)
+- Bundle size analysis
+
+**Responsividade:**
+- Mobile-first (design prioriza mobile)
+- Breakpoints Tailwind:
+  - sm: 640px (mobile landscape)
+  - md: 768px (tablet)
+  - lg: 1024px (desktop)
+  - xl: 1280px (large desktop)
+  - 2xl: 1536px (extra large)
+- Touch-friendly (botões min 44x44px)
+- Gestures (swipe, long-press)
+
+### 3.2 Backend
+
+**Stack Recomendada:**
+- **Runtime:** Node.js 20+ LTS
+- **Framework:** 
+  - Fastify (performance superior) OU
+  - Express com Helmet/Morgan
+  - NestJS (para projetos maiores/escaláveis)
+  
+- **Banco de Dados:**
+  - **Principal:** PostgreSQL 15+
+    - Relacionamentos complexos
+    - JSONB para dados flexíveis
+    - Full-text search
+    - Views materializadas para relatórios
+  - **Cache:** Redis
+    - Cache de sessões
+    - Rate limiting
+    - Filas de jobs (Bull/BullMQ)
+  
+- **ORM/Query Builder:**
+  - Prisma (type-safe, migrations, studio)
+  - TypeORM (alternativa robusta)
+  - Knex.js (query builder leve)
+
+**Autenticação & Segurança:**
+- **JWT (JSON Web Tokens)**
+  - Access token: 15 minutos
+  - Refresh token: 7 dias
+  - Token rotation
+  - Blacklist de tokens revogados (Redis)
+  
+- **Bcrypt:** hash de senhas
+  - Salt rounds: 12 (segurança elevada)
+  
+- **Rate Limiting:**
+  - Login: 5 tentativas / 15 min
+  - API geral: 100 req/min
+  - Endpoints críticos: 10 req/min
+  
+- **Headers de Segurança:**
+  - Helmet.js configurado
+  - CORS restritivo
+  - Content-Security-Policy
+  - HSTS (HTTP Strict Transport Security)
+  
+- **Validação de Inputs:**
+  - Joi ou Zod no backend
+  - Sanitização contra XSS
+  - Proteção SQL Injection (ORM parameterizado)
+  - Upload de arquivos: validação de tipo/tamanho
+
+**APIs RESTful + WebSockets:**
+
+```
+# Autenticação
+POST   /api/v1/auth/register
+POST   /api/v1/auth/login
+POST   /api/v1/auth/refresh
+POST   /api/v1/auth/logout
+POST   /api/v1/auth/forgot-password
+POST   /api/v1/auth/reset-password
+GET    /api/v1/auth/me
+PUT    /api/v1/auth/verify-email/:token
+
+# Usuários
+GET    /api/v1/users/profile
+PUT    /api/v1/users/profile
+PUT    /api/v1/users/password
+PUT    /api/v1/users/preferences
+DELETE /api/v1/users/account
+POST   /api/v1/users/avatar
+
+# Registros Diários
+GET    /api/v1/records                # Lista paginada
+POST   /api/v1/records                # Criar
+GET    /api/v1/records/:id            # Detalhes
+PUT    /api/v1/records/:id            # Atualizar
+DELETE /api/v1/records/:id            # Excluir
+POST   /api/v1/records/bulk           # Importação em massa
+POST   /api/v1/records/:id/duplicate  # Duplicar registro
+
+# Estatísticas
+GET    /api/v1/stats/dashboard        # Dados do dashboard
+GET    /api/v1/stats/monthly          # Estatísticas do mês
+GET    /api/v1/stats/period           # Período customizado
+GET    /api/v1/stats/total            # Acumulado total
+GET    /api/v1/stats/comparative      # Comparativos mensais
+GET    /api/v1/stats/platform         # Por plataforma
+
+# Gráficos
+GET    /api/v1/charts/evolution       # Evolução financeira
+GET    /api/v1/charts/daily           # Comparativo diário
+GET    /api/v1/charts/expenses        # Distribuição de gastos
+GET    /api/v1/charts/platform        # Performance por plataforma
+GET    /api/v1/charts/heatmap         # Heatmap de rentabilidade
+
+# Metas
+GET    /api/v1/goals                  # Listar metas
+POST   /api/v1/goals                  # Criar meta
+GET    /api/v1/goals/:id              # Detalhes
+PUT    /api/v1/goals/:id              # Atualizar
+DELETE /api/v1/goals/:id              # Excluir
+GET    /api/v1/goals/current/progress # Progresso da meta atual
+
+# Alertas
+GET    /api/v1/alerts                 # Listar alertas
+GET    /api/v1/alerts/:id             # Detalhes
+PUT    /api/v1/alerts/:id/read        # Marcar como lido
+DELETE /api/v1/alerts/:id             # Excluir
+
+# Relatórios
+POST   /api/v1/reports/generate       # Gerar relatório
+GET    /api/v1/reports/:id/download   # Download
+GET    /api/v1/reports/ir             # Relatório fiscal IR
+
+# Exportação/Importação
+POST   /api/v1/export                 # Exportar dados
+POST   /api/v1/import                 # Importar dados
+GET    /api/v1/import/:id/status      # Status da importação
+
+# Benchmarking (Fase 2)
+GET    /api/v1/benchmark/stats        # Estatísticas anônimas
+GET    /api/v1/benchmark/ranking      # Posição no ranking
+GET    /api/v1/benchmark/achievements # Conquistas
+
+# WebSocket (real-time)
+WS     /api/v1/ws                     # Conexão WebSocket
+       - Eventos: record_created, goal_achieved, alert_new
+```
+
+**Estrutura do Projeto (Backend):**
+```
+src/
+├── config/          # Configurações (DB, JWT, etc)
+├── controllers/     # Lógica de controle
+├── middlewares/     # Auth, validation, error handling
+├── models/          # Models do Prisma/TypeORM
+├── routes/          # Definição de rotas
+├── services/        # Lógica de negócio
+├── utils/           # Funções auxiliares
+├── validators/      # Schemas de validação
+├── jobs/            # Background jobs (e-mails, relatórios)
+└── tests/           # Testes unitários e integração
+```
+
+### 3.3 Banco de Dados
+
+**Schema PostgreSQL Completo:**
+
+```sql
+-- Tabela: users
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    city VARCHAR(100),
+    state VARCHAR(2),
+    photo_url TEXT,
+    vehicle_type VARCHAR(50),
+    start_year INTEGER,
+    platforms JSONB DEFAULT '[]'::JSONB,
+    preferences JSONB DEFAULT '{}'::JSONB,
+    email_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    deleted_at TIMESTAMP
+);
+
+-- Tabela: records (registros diários)
+CREATE TABLE records (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    date DATE NOT NULL,
+    platforms JSONB DEFAULT '[]'::JSONB, -- ["uber", "99"]
+    revenue DECIMAL(10,2) NOT NULL, -- faturamento
+    expenses DECIMAL(10,2) NOT NULL, -- gastos totais
+    kilometers DECIMAL(8,2) NOT NULL,
+    profit DECIMAL(10,2) GENERATED ALWAYS AS (revenue - expenses) STORED,
+    margin DECIMAL(5,2) GENERATED ALWAYS AS (
+        CASE WHEN revenue > 0 
+        THEN ((revenue - expenses) / revenue * 100) 
+        ELSE 0 END
+    ) STORED,
+    profit_per_km DECIMAL(6,2) GENERATED ALWAYS AS (
+        CASE WHEN kilometers > 0 
+        THEN ((revenue - expenses) / kilometers) 
+        ELSE 0 END
+    ) STORED,
+    
+    -- Detalhamento de ganhos por plataforma
+    revenue_breakdown JSONB DEFAULT '{}'::JSONB,
+    -- Ex: {"uber": 200.00, "99": 150.00}
+    
+    -- Detalhamento de gastos
+    expense_fuel DECIMAL(10,2) DEFAULT 0,
+    expense_maintenance DECIMAL(10,2) DEFAULT 0,
+    expense_food DECIMAL(10,2) DEFAULT 0,
+    expense_wash DECIMAL(10,2) DEFAULT 0,
+    expense_toll DECIMAL(10,2) DEFAULT 0,
+    expense_parking DECIMAL(10,2) DEFAULT 0,
+    expense_other DECIMAL(10,2) DEFAULT 0,
+    
+    -- Informações complementares
+    trips_count INTEGER,
+    hours_worked DECIMAL(4,2),
+    start_time TIME,
+    end_time TIME,
+    notes TEXT,
+    
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    
+    UNIQUE(user_id, date)
+);
+
+-- Tabela: goals (metas)
+CREATE TABLE goals (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(20) NOT NULL, -- 'monthly', 'weekly', 'custom'
+    target_value DECIMAL(10,2) NOT NULL,
+    target_period DATE NOT NULL, -- mês/semana de referência
+    current_value DECIMAL(10,2) DEFAULT 0,
+    achieved BOOLEAN DEFAULT FALSE,
+    achieved_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Tabela: alerts (alertas inteligentes)
+CREATE TABLE alerts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL, -- 'performance', 'opportunity', 'maintenance'
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    severity VARCHAR(20) DEFAULT 'info', -- 'info', 'warning', 'success'
+    read BOOLEAN DEFAULT FALSE,
+    action_url TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Tabela: password_resets
+CREATE TABLE password_resets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Tabela: refresh_tokens
+CREATE TABLE refresh_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token VARCHAR(500) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    revoked BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Tabela: audit_logs (auditoria)
+CREATE TABLE audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    action VARCHAR(100) NOT NULL, -- 'login', 'create_record', 'delete_record'
+    entity_type VARCHAR(50),
+    entity_id UUID,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Índices para performance
+CREATE INDEX idx_records_user_date ON records(user_id, date DESC);
+CREATE INDEX idx_records_user_created ON records(user_id, created_at DESC);
+CREATE INDEX idx_goals_user_period ON goals(user_id, target_period);
+CREATE INDEX idx_alerts_user_unread ON alerts(user_id, read) WHERE read = FALSE;
+CREATE INDEX idx_users_email ON users(email);
+
+-- View materializada para estatísticas (performance)
+CREATE MATERIALIZED VIEW user_stats_monthly AS
+SELECT 
+    user_id,
+    DATE_TRUNC('month', date) as month,
+    COUNT(*) as days_worked,
+    SUM(revenue) as total_revenue,
+    SUM(expenses) as total_expenses,
+    SUM(profit) as total_profit,
+    AVG(profit) as avg_daily_profit,
+    SUM(kilometers) as total_kilometers,
+    AVG(profit_per_km) as avg_profit_per_km
+FROM records
+GROUP BY user_id, DATE_TRUNC('month', date);
+
+CREATE UNIQUE INDEX ON user_stats_monthly (user_id, month);
+
+-- Trigger para atualizar updated_at automaticamente
+CREATE OR REPLACE FUNCTION update_updated_at()
+RETURNS TRIGGER AS $
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$ LANGUAGE plpgsql;
+
+CREATE TRIGGER users_updated_at BEFORE UPDATE ON users
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+    
+CREATE TRIGGER records_updated_at BEFORE UPDATE ON records
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+```
+
+**Otimizações de Performance:**
+- Indexes compostos para queries frequentes
+- Colunas calculadas (GENERATED) para métricas
+- Views materializadas para agregações pesadas
+- Particionamento por data (Fase 2, quando scale)
+- VACUUM e ANALYZE automáticos
+- Connection pooling (pg-pool)
+
+### 3.4 Infraestrutura e DevOps
+
+**Hosting Recomendado:**
+
+**Opção 1 - Full Stack Serverless (MVP):**
+- **Frontend:** Vercel
+  - Deploy automático via Git
+  - Edge Network global
+  - Serverless Functions para API routes
+  
+- **Backend:** Railway ou Render
+  - Deploy via Docker
+  - Auto-scaling
+  - Logs integrados
+  
+- **Banco de Dados:** Supabase ou Neon
+  - PostgreSQL gerenciado
+  - Backups automáticos
+  - Connection pooling
+  
+**Opção 2 - Cloud Provider (Escalabilidade):**
+- **AWS:**
+  - EC2/ECS para backend
+  - RDS PostgreSQL
+  - S3 para arquivos
+  - CloudFront CDN
+  - Route53 DNS
+  
+- **OU Google Cloud Platform:**
+  - Cloud Run (containers)
+  - Cloud SQL
+  - Cloud Storage
+  - Cloud CDN
+
+**Serviços Adicionais:**
+- **Storage de Imagens:** Cloudinary
+  - Upload direto do cliente
+  - Transformação automática
+  - CDN integrado
+  
+- **E-mail Transacional:** 
+  - Resend (moderno, developer-friendly)
+  - SendGrid (robusto, escalável)
+  - AWS SES (custo-benefício)
+  
+- **Monitoramento:**
+  - **Erros:** Sentry
+    - Source maps
+    - Release tracking
+    - Performance monitoring
+  - **Analytics:** 
+    - Google Analytics 4
+    - Mixpanel (eventos)
+    - Hotjar (heatmaps)
+  - **Uptime:** UptimeRobot ou Pingdom
+  - **APM:** New Relic ou Datadog
+  
+- **Logs:** 
+  - Papertrail ou Logtail
+  - Structured logging (JSON)
+  - Log aggregation
+
+**CI/CD Pipeline:**
+- GitHub Actions ou GitLab CI
+- Stages:
+  1. Lint (ESLint, Prettier)
+  2. Type check (TypeScript)
+  3. Tests (Jest, Vitest)
+  4. Build
+  5. Deploy to staging
+  6. Deploy to production (após aprovação)
+  
+**Ambientes:**
+- Development (local)
+- Staging (pre-production)
+- Production
+
+**Backup Strategy:**
+- **Database:**
+  - Backups diários automáticos (7 dias)
+  - Backups semanais (4 semanas)
+  - Backups mensais (12 meses)
+  - Point-in-time recovery
+  
+- **Arquivos:**
+  - Replicação automática (S3, Cloudinary)
+  
+**Disaster Recovery:**
+- RTO (Recovery Time Objective): < 4 horas
+- RPO (Recovery Point Objective): < 1 hora
+- Documentação de procedimentos
+- Testes trimestrais
+
+### 3.5 Segurança em Profundidade
+
+**Camadas de Segurança:**
+
+**1. Aplicação:**
+- Input validation (frontend + backend)
+- Output encoding (prevenir XSS)
+- CSRF tokens
+- SQL Injection prevention (ORM)
+- Secrets em variáveis de ambiente (.env)
+- Dependências atualizadas (Dependabot)
+
+**2. Autenticação:**
+- Senhas com bcrypt (salt rounds: 12)
+- JWT com expiração curta
+- Refresh token rotation
+- Rate limiting em login
+- Account lockout após tentativas falhas
+- 2FA (Fase 2)
+
+**3. Autorização:**
+- RBAC (Role-Based Access Control)
+- Validação de ownership (user_id)
+- Princípio do menor privilégio
+
+**4. Rede:**
+- HTTPS obrigatório (SSL/TLS 1.3)
+- HSTS habilitado
+- Firewall configurado
+- IP whitelisting para admin
+
+**5. Dados:**
+- Criptografia em repouso (database)
+- Criptografia em trânsito (HTTPS)
+- Logs sem dados sensíveis
+- GDPR/LGPD compliance
+- Anonimização em backups antigos
+
+**6. Compliance:**
+- **LGPD (Lei Geral de Proteção de Dados):**
+  - Consentimento explícito
+  - Direito ao esquecimento
+  - Portabilidade de dados
+  - Política de Privacidade clara
+  - Termos de Uso
+  
+- **PCI DSS (se processar pagamentos futuros):**
+  - Nunca armazenar dados de cartão
+  - Usar gateway certificado
+
+**Auditorias:**
+- Penetration testing (anual)
+- Vulnerability scans (mensal)
+- Code review de segurança
+- Security headers check
+
+---
+
+## 4. Design e UX Aprimorado
+
+### 4.1 Design System
+
+**Paleta de Cores Expandida:**
+
+**Cores Principais:**
+- **Primary:** #6366F1 (Indigo-500)
+  - Hover: #4F46E5 (Indigo-600)
+  - Light: #818CF8 (Indigo-400)
+  - Dark: #4338CA (Indigo-700)
+  
+- **Secondary:** #06B6D4 (Cyan-500)
+  - Hover: #0891B2 (Cyan-600)
+  
+- **Success:** #10B981 (Green-500)
+  - Light: #34D399 (Green-400)
+  - Dark: #059669 (Green-600)
+  
+- **Danger:** #EF4444 (Red-500)
+  - Light: #F87171 (Red-400)
+  - Dark: #DC2626 (Red-600)
+  
+- **Warning:** #F59E0B (Amber-500)
+  - Light: #FBBF24 (Amber-400)
+  
+- **Info:** #3B82F6 (Blue-500)
+
+**Cores Neutras (Gray Scale):**
+- 50: #F9FAFB
+- 100: #F3F4F6
+- 200: #E5E7EB
+- 300: #D1D5DB
+- 400: #9CA3AF
+- 500: #6B7280
+- 600: #4B5563
+- 700: #374151
+- 800: #1F2937
+- 900: #111827
+
+**Cores de Fundo:**
+- Background (light): #F9FAFB (Gray-50)
+- Background (dark): #111827 (Gray-900)
+- Surface (light): #FFFFFF
+- Surface (dark): #1F2937 (Gray-800)
+- Overlay: rgba(0,0,0,0.5)
+
+**Gradientes:**
+```css
+.gradient-primary {
+  background: linear-gradient(135deg, #6366F1 0%, #818CF8 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.gradient-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+}
+
+.gradient-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
+}
+```
+
+### 4.2 Tipografia
+
+**Fonte Principal:** Inter (Google Fonts)
+- Fallback: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto
+
+**Escala Tipográfica:**
+- **Display:** 3.5rem (56px) / 1.1 line-height - Títulos de landing
+- **H1:** 2.5rem (40px) / 1.2 - Títulos principais
+- **H2:** 2rem (32px) / 1.3 - Subtítulos grandes
+- **H3:** 1.5rem (24px) / 1.4 - Subtítulos médios
+- **H4:** 1.25rem (20px) / 1.4 - Subtítulos pequenos
+- **Body Large:** 1.125rem (18px) / 1.6 - Textos destacados
+- **Body:** 1rem (16px) / 1.6 - Texto padrão
+- **Body Small:** 0.875rem (14px) / 1.5 - Textos secundários
+- **Caption:** 0.75rem (12px) / 1.4 - Labels, legendas
+
+**Pesos:**
+- Regular: 400
+- Medium: 500
+- Semibold: 600
+- Bold: 700
+
+**Classes Tailwind:**
+```html
+<h1 class="text-4xl font-bold">Título Principal</h1>
+<p class="text-base font-normal leading-relaxed">Parágrafo</p>
+<span class="text-sm text-gray-500">Secundário</span>
+```
+
+### 4.3 Espaçamento e Grid
+
+**Sistema de Espaçamento (4px base):**
+- 0: 0px
+- 1: 4px
+- 2: 8px
+- 3: 12px
+- 4: 16px
+- 6: 24px
+- 8: 32px
+- 10: 40px
+- 12: 48px
+- 16: 64px
+- 20: 80px
+- 24: 96px
+
+**Grid System:**
+- Container max-width:
+  - sm: 640px
+  - md: 768px
+  - lg: 1024px
+  - xl: 1280px
+  - 2xl: 1536px
+  
+- Gutters: 24px (desktop), 16px (mobile)
+
+**Layout Patterns:**
+- Seções: py-16 (64px) ou py-20 (80px)
+- Cards: p-6 (24px)
+- Forms: gap-4 (16px entre campos)
+
+### 4.4 Componentes UI
+
+**Botões:**
+```tsx
+// Primário
+<button className="
+  px-6 py-3
+  bg-indigo-600 hover:bg-indigo-700
+  text-white font-semibold
+  rounded-lg
+  shadow-md hover:shadow-lg
+  transition-all duration-200
+  active:scale-95
+">
+  Ação Principal
+</button>
+
+// Secundário
+<button className="
+  px-6 py-3
+  border-2 border-indigo-600
+  text-indigo-600 hover:bg-indigo-50
+  font-semibold
+  rounded-lg
+  transition-all duration-200
+">
+  Ação Secundária
+</button>
+
+// Destructivo
+<button className="
+  px-6 py-3
+  bg-red-600 hover:bg-red-700
+  text-white
+  rounded-lg
+  transition-all
+">
+  Excluir
+</button>
+```
+
+**Inputs:**
+```tsx
+<div className="space-y-2">
+  <label className="block text-sm font-medium text-gray-700">
+    E-mail
+  </label>
+  <input 
+    type="email"
+    className="
+      w-full px-4 py-3
+      border border-gray-300
+      rounded-lg
+      focus:ring-2 focus:ring-indigo-500 focus:border-transparent
+      transition-all
+      placeholder:text-gray-400
+    "
+    placeholder="seu@email.com"
+  />
+</div>
+```
+
+**Cards:**
+```tsx
+<div className="
+  bg-white
+  rounded-xl
+  shadow-md hover:shadow-xl
+  p-6
+  transition-all duration-300
+  border border-gray-100
+">
+  {/* Card content */}
+</div>
+```
+
+**Badges:**
+```tsx
+// Success
+<span className="
+  inline-flex items-center
+  px-3 py-1
+  rounded-full
+  text-sm font-medium
+  bg-green-100 text-green-800
+">
+  ✓ Ativo
+</span>
+
+// Warning
+<span className="
+  px-3 py-1 rounded-full text-sm
+  bg-amber-100 text-amber-800
+">
+  ⚠ Atenção
+</span>
+```
+
+**Tooltips:**
+- Usar Radix UI ou Headless UI
+- Animação suave (fade + slide)
+- Delay de 300ms
+- Máx 200px largura
+
+**Modals:**
+- Overlay escuro (opacity-50)
+- Animação: scale + fade
+- Fechar ao clicar fora ou ESC
+- Trap focus dentro do modal
+- Max-width: 600px
+
+### 4.5 Animações e Micro-interações
+
+**Transições Padrão:**
+```css
+.transition-default {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-smooth {
+  transition: all 0.3s ease-in-out;
+}
+```
+
+**Animações com Framer Motion:**
+```tsx
+// Fade in ao carregar
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4 }}
+>
+  {content}
+</motion.div>
+
+// Contador animado
+<AnimatedNumber value={1250.50} duration={1000} />
+
+// Skeleton loader
+<motion.div
+  className="h-4 bg-gray-200 rounded"
+  animate={{ opacity: [0.5, 1, 0.5] }}
+  transition={{ duration: 1.5, repeat: Infinity }}
+/>
+```
+
+**Hover States:**
+- Botões: elevação + cor mais escura
+- Cards: elevação sutil
+- Links: underline animado
+- Ícones: rotate ou scale
+
+**Loading States:**
+- Spinners para ações rápidas
+- Skeleton screens para carregamento de página
+- Progress bars para uploads
+- Pulse animation para placeholders
+
+**Success Feedback:**
+- Checkmark animado (draw animation)
+- Toast notification
+- Confetti para conquistas (canvas-confetti)
+
+### 4.6 Dark Mode
+
+**Implementação:**
+- Toggle no header
+- Salvar preferência no localStorage
+- Respeitar preferência do sistema
+- Transição suave entre temas
+
+**Cores Dark Mode:**
+```css
+:root[data-theme="dark"] {
+  --bg-primary: #111827;
+  --bg-secondary: #1F2937;
+  --text-primary: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --border: #374151;
+}
+```
+
+**Ajustes de Componentes:**
+- Cards: bg-gray-800 (dark)
+- Inputs: bg-gray-700, border-gray-600
+- Sombras menos intensas
+- Contrast ratios mantidos (WCAG AA)
+
+### 4.7 Acessibilidade (A11y)
+
+**Checklist:**
+- ✅ Contrast ratio mínimo 4.5:1 (WCAG AA)
+- ✅ Todos inputs com labels
+- ✅ Focus visible em todos elementos interativos
+- ✅ Navegação por teclado funcional
+- ✅ ARIA labels onde necessário
+- ✅ Alt text em todas imagens
+- ✅ Hierarquia de headings correta (H1 > H2 > H3)
+- ✅ Skip to main content link
+- ✅ Error messages descritivas
+- ✅ Loading states anunciados (aria-live)
+- ✅ Modals com trap focus
+- ✅ Formulários com error recovery
+
+**Screen Readers:**
+- Testar com NVDA (Windows) e VoiceOver (Mac)
+- Landmark regions definidas
+- Anúncios de mudanças dinâmicas
+
+**Keyboard Navigation:**
+- Tab order lógico
+- Enter/Space para ativar
+- Esc para fechar modals
+- Arrow keys em listas/menus
+
+---
+
+## 5. Fluxos de Usuário Detalhados
+
+### 5.1 Onboarding Completo (Primeiro Acesso)
+
+**1. Landing Page → Cadastro**
+- Usuário clica em "Começar Grátis"
+- Redirecionado para formulário de cadastro
+- Preenche dados em 3 passos
+- Recebe e-mail de boas-vindas
+
+**2. Primeiro Login → Tutorial Interativo**
+- Dashboard vazio com overlay
+- Tour guiado (usando Intro.js ou similar):
+  - Step 1: "Bem-vindo! Aqui está seu dashboard"
+  - Step 2: "Clique em + Novo Registro para começar"
+  - Step 3: "Defina suas metas aqui"
+  - Step 4: "Acompanhe gráficos e estatísticas"
+- Opção de pular tutorial
+- Call-to-action: "Registrar Primeiro Dia"
+
+**3. Primeiro Registro**
+- Modal abre automaticamente
+- Campos com placeholders explicativos
+- Tooltips inline: "?" com explicações
+- Pré-visualização do lucro em destaque
+- Após salvar: animação de sucesso + confetti
+- Prompt: "Quer configurar sua meta mensal?"
+
+**4. Configuração de Meta (Opcional)**
+- Wizard de 2 passos:
+  - Define valor da meta
+  - Confirma dias de trabalho esperados
+- Sugestão baseada em primeiro registro
+- Após configurar: voltar ao dashboard atualizado
+
+### 5.2 Uso Diário Típico (Motorista Experiente)
+
+**Cenário: Fim do dia de trabalho**
+
+**1. Acesso Rápido**
+- Motorista abre app no celular
+- Autenticação biométrica (se ativada)
+- Dashboard carrega instantaneamente (dados em cache)
+
+**2. Registro Rápido do Dia**
+- Clica em "➕ Novo Registro" (botão sempre visível)
+- Modal abre com data pré-preenchida (hoje)
+- Preenche rapidamente:
+  - Faturamento: R$ XXX (do app de corrida)
+  - Quilometragem: XXX km (do odômetro)
+  - Gastos: R$ XXX (combustível + alimentação)
+- Pré-visualização mostra lucro em tempo real
+- Clica em "Salvar" (< 30 segundos total)
+- Toast de confirmação aparece
+- Dashboard atualiza automaticamente
+
+**3. Verificação Rápida**
+- Olha o banner de meta: "78% concluído"
+- Verifica se bateu meta diária
+- Se sim, celebração visual 🎉
+- Se não, vê quanto falta: "Faltam R$ 85"
+
+**4. Insights do Dia (Opcional)**
+- Lê insights personalizados: "Terças são seus melhores dias"
+- Verifica alertas: "Gastos com combustível 12% acima da média"
+- Toma decisão para amanhã baseado em dados
+
+---
+
+### 5.3 Roadmap de Implementação
+
+#### Fase 1 - MVP (Mínimo Produto Viável) - 8-12 semanas
+**Prioridade: Alta - Funcionalidades Essenciais**
+
+**Sprint 1-2 (2 semanas):**
+- ✅ Autenticação completa (login, registro, recuperação)
+- ✅ Dashboard básico com 4 cards principais
+- ✅ Formulário de registro diário simplificado
+- ✅ Listagem de registros (tabela básica)
+- ✅ Perfil do usuário básico
+
+**Sprint 3-4 (2 semanas):**
+- ✅ Gráficos básicos (evolução financeira, distribuição de gastos)
+- ✅ Estatísticas detalhadas (mês atual, totais)
+- ✅ Edição e exclusão de registros
+- ✅ Sistema de combustível e manutenção (já implementado)
+
+**Sprint 5-6 (2 semanas):**
+- ✅ Sistema de metas mensais básico
+- ✅ Banner de meta no dashboard
+- ✅ Cálculos avançados (custo/km, lucro/km)
+- ✅ Exportação básica (CSV)
+
+**Sprint 7-8 (2 semanas):**
+- ✅ Refinamento de UI/UX
+- ✅ Responsividade mobile completa
+- ✅ Testes de integração
+- ✅ Deploy em produção
+
+#### Fase 2 - Funcionalidades Avançadas - 6-8 semanas
+**Prioridade: Média - Diferenciais Competitivos**
+
+**Sprint 9-10 (2 semanas):**
+- Sistema de alertas inteligentes
+- Insights personalizados básicos
+- Comparativo de plataformas
+- Histórico de metas
+
+**Sprint 11-12 (2 semanas):**
+- Relatórios fiscais para IR
+- Exportação avançada (PDF, Excel)
+- Importação de dados
+- Gráficos avançados (heatmap, performance por plataforma)
+
+**Sprint 13-14 (2 semanas):**
+- Sistema de notificações (e-mail)
+- Preferências do usuário avançadas
+- Dark mode
+- Otimizações de performance
+
+#### Fase 3 - Recursos Premium - 8-12 semanas
+**Prioridade: Baixa - Monetização e Escala**
+
+**Sprint 15-18 (4 semanas):**
+- Captura automática de dados (Android)
+- Benchmarking anônimo
+- Sistema de conquistas
+- API pública para integrações
+
+**Sprint 19-22 (4 semanas):**
+- App mobile nativo (React Native)
+- Push notifications
+- Modo offline completo
+- Sincronização em tempo real
+
+**Sprint 23-24 (2 semanas):**
+- Integração com contadores parceiros
+- Sistema de assinaturas (Premium)
+- Analytics avançado para usuários Premium
+- Suporte multi-idioma
+
+---
+
+## 6. Métricas de Sucesso e KPIs
+
+### 6.1 Métricas de Produto
+
+**Engajamento:**
+- Taxa de retorno diário: > 60%
+- Tempo médio na sessão: > 5 minutos
+- Registros por usuário/mês: > 20
+- Taxa de conclusão de registro: > 85%
+
+**Adoção:**
+- Tempo para primeiro registro: < 2 minutos
+- Taxa de ativação (primeiro registro em 7 dias): > 70%
+- Taxa de retenção (usuários ativos após 30 dias): > 50%
+- Taxa de churn mensal: < 10%
+
+**Valor:**
+- Usuários que definem meta: > 40%
+- Taxa de conclusão de meta mensal: > 30%
+- Usuários que exportam relatórios: > 20%
+- NPS (Net Promoter Score): > 50
+
+### 6.2 Métricas Técnicas
+
+**Performance:**
+- First Contentful Paint: < 1.5s
+- Time to Interactive: < 3s
+- Lighthouse Score: > 90
+- Uptime: > 99.5%
+
+**Qualidade:**
+- Taxa de erros: < 0.1%
+- Tempo médio de resposta da API: < 200ms
+- Cobertura de testes: > 70%
+- Bugs críticos resolvidos em: < 24h
+
+### 6.3 Métricas de Negócio
+
+**Crescimento:**
+- Novos usuários/mês: Meta inicial 1000
+- Taxa de crescimento mensal: > 20%
+- CAC (Custo de Aquisição): < R$ 10
+- LTV (Lifetime Value): > R$ 50
+
+**Monetização (Fase 3):**
+- Taxa de conversão para Premium: > 5%
+- MRR (Monthly Recurring Revenue): Meta R$ 10k em 6 meses
+- Churn de assinantes: < 5% mensal
+
+---
+
+## 7. Riscos e Mitigações
+
+### 7.1 Riscos Técnicos
+
+**Risco: Problemas de performance com grande volume de dados**
+- **Mitigação:** 
+  - Implementar paginação e lazy loading desde o início
+  - Usar views materializadas no PostgreSQL
+  - Cache estratégico com Redis
+  - Otimização de queries com índices adequados
+
+**Risco: Problemas de segurança (vazamento de dados)**
+- **Mitigação:**
+  - Auditorias de segurança regulares
+  - Implementar rate limiting
+  - Criptografia de dados sensíveis
+  - Testes de penetração periódicos
+  - Compliance com LGPD desde o início
+
+**Risco: Dependências de terceiros (APIs, serviços)**
+- **Mitigação:**
+  - Ter fallbacks para serviços críticos
+  - Monitoramento de uptime de serviços externos
+  - Contratos SLA com provedores
+  - Documentação de procedimentos de contingência
+
+### 7.2 Riscos de Produto
+
+**Risco: Baixa adoção de usuários**
+- **Mitigação:**
+  - Onboarding simplificado e intuitivo
+  - Tutorial interativo no primeiro acesso
+  - Feedback contínuo dos usuários
+  - Ajustes rápidos baseados em analytics
+
+**Risco: Concorrência com apps estabelecidos**
+- **Mitigação:**
+  - Focar em diferenciais únicos (insights, relatórios fiscais)
+  - UX superior e mais moderna
+  - Preço competitivo (freemium)
+  - Marketing direcionado em comunidades de motoristas
+
+**Risco: Complexidade excessiva afastando usuários**
+- **Mitigação:**
+  - Design mobile-first e simples
+  - Registro em menos de 1 minuto
+  - Funcionalidades avançadas opcionais
+  - Testes de usabilidade regulares
+
+### 7.3 Riscos de Negócio
+
+**Risco: Custos de infraestrutura crescerem muito**
+- **Mitigação:**
+  - Começar com stack serverless (Vercel, Railway)
+  - Monitoramento de custos mensal
+  - Otimização contínua de recursos
+  - Planejamento de escala gradual
+
+**Risco: Regulamentações (LGPD, fiscal)**
+- **Mitigação:**
+  - Consultoria jurídica especializada
+  - Compliance desde o design inicial
+  - Políticas de privacidade claras
+  - Termos de uso bem definidos
+
+---
+
+## 8. Conclusão e Próximos Passos
+
+### 8.1 Resumo Executivo
+
+Este PRD descreve um sistema completo de controle financeiro para motoristas de aplicativo, com foco em:
+- **Simplicidade:** Registro em menos de 1 minuto
+- **Inteligência:** Insights e recomendações baseadas em dados
+- **Completude:** Desde registro diário até relatórios fiscais
+- **Modernidade:** Interface moderna, responsiva e acessível
+
+### 8.2 Diferenciais Competitivos
+
+1. **Sistema de Metas Visual:** Banner sempre visível no dashboard
+2. **Insights Inteligentes:** Recomendações personalizadas baseadas em padrões
+3. **Relatórios Fiscais:** Preparação automática para declaração de IR
+4. **Captura Automática:** Integração com apps de corrida (Fase 3)
+5. **Benchmarking Anônimo:** Comparação com outros motoristas (Fase 3)
+
+### 8.3 Próximos Passos Imediatos
+
+1. **Validação com Usuários:**
+   - Entrevistas com 10-15 motoristas
+   - Testes de usabilidade do MVP
+   - Ajustes baseados em feedback
+
+2. **Desenvolvimento MVP:**
+   - Iniciar Fase 1 conforme roadmap
+   - Deploy contínuo em ambiente de staging
+   - Testes automatizados desde o início
+
+3. **Marketing e Aquisição:**
+   - Landing page para captura de leads
+   - Presença em grupos de motoristas (Facebook, WhatsApp)
+   - Parcerias com cooperativas de motoristas
+
+4. **Monitoramento:**
+   - Configurar analytics (Google Analytics, Mixpanel)
+   - Dashboard de métricas de produto
+   - Revisões semanais de progresso
+
+---
+
+## 9. Apêndices
+
+### 9.1 Glossário de Termos
+
+- **Faturamento:** Valor total recebido das corridas
+- **Lucro Líquido:** Faturamento - Gastos totais
+- **Margem:** (Lucro / Faturamento) × 100
+- **Lucro/km:** Lucro dividido pela quilometragem
+- **Custo/km:** Gastos divididos pela quilometragem
+- **Meta Diária:** Meta mensal dividida pelos dias úteis restantes
+- **Benchmarking:** Comparação anônima com outros motoristas
+
+### 9.2 Referências e Inspirações
+
+- **DRIVH:** App de controle financeiro para motoristas (inspiração para sistema de metas)
+- **Uber Driver App:** Interface e fluxos de registro
+- **99 App:** Experiência do motorista
+- **Notion:** Design system e organização de informações
+- **Linear:** Interface moderna e intuitiva
+
+### 9.3 Contatos e Recursos
+
+**Equipe de Desenvolvimento:**
+- Tech Lead: [A definir]
+- Frontend: [A definir]
+- Backend: [A definir]
+- Design: [A definir]
+
+**Ferramentas:**
+- Design: Figma
+- Gerenciamento: Linear ou Jira
+- Comunicação: Slack ou Discord
+- Repositório: GitHub
+- Documentação: Notion ou Confluence
+
+---
+
+**Versão do Documento:** 2.0  
+**Última Atualização:** Janeiro 2026  
+**Próxima Revisão:** Após conclusão do MVP (Fase 1)
