@@ -35,12 +35,22 @@ COPY . .
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
 RUN npx prisma generate
 
-# Build Next.js (com logs detalhados)
+# Build Next.js (com logs detalhados e tratamento de erro)
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-RUN npx next build 2>&1 | tee build.log && \
+RUN set -o pipefail && \
+    npx next build 2>&1 | tee build.log || \
+    (echo "=== ❌ BUILD FALHOU ===" && \
+     echo "=== Logs completos do build ===" && \
+     cat build.log && \
+     echo "=== Verificando .next/trace ===" && \
+     cat .next/trace 2>/dev/null || echo "Trace não disponível" && \
+     echo "=== Listando arquivos .next ===" && \
+     ls -la .next/ 2>/dev/null || echo "Diretório .next não existe" && \
+     exit 1) && \
+    echo "=== ✅ Build completado ===" && \
     echo "=== Verificando se standalone foi gerado ===" && \
-    (test -d .next/standalone && echo "✅ Standalone gerado!" || (echo "❌ ERRO: standalone não gerado!" && cat build.log && exit 1))
+    (test -d .next/standalone && echo "✅ Standalone gerado com sucesso!" || (echo "❌ ERRO: standalone não gerado!" && exit 1))
 
 # ============================================
 # Stage 3: Imagem de produção
