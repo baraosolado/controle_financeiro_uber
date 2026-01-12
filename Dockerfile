@@ -43,16 +43,18 @@ RUN adduser --system --uid 1001 nextjs
 
 # Copiar arquivos necessários do standalone build
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
 
-# Copiar Prisma files
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=builder /app/prisma ./prisma
+# Copiar standalone build
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copiar package.json para scripts do Prisma
-COPY --from=builder /app/package.json ./package.json
+# Copiar Prisma files necessários
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Copiar package.json para scripts do Prisma (se necessário)
+COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
 # Ajustar permissões
 RUN chown -R nextjs:nodejs /app
