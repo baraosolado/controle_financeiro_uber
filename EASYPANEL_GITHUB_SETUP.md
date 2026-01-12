@@ -25,14 +25,29 @@ No EasyPanel, vá em **"Environment Variables"** e adicione:
 # OBRIGATÓRIAS
 DATABASE_URL=postgresql://usuario:senha@host:5432/controlefinanceirouber?schema=public
 NEXTAUTH_SECRET=<gere com: openssl rand -base64 32>
+
+# URL da aplicação (use uma das opções abaixo)
+# Opção 1: Com domínio próprio
 NEXTAUTH_URL=https://seu-dominio.com
 ALLOWED_ORIGINS=https://seu-dominio.com
 NEXT_PUBLIC_APP_URL=https://seu-dominio.com
+
+# Opção 2: Sem domínio (usando IP ou domínio do EasyPanel)
+# NEXTAUTH_URL=http://SEU-IP:PORTA
+# ALLOWED_ORIGINS=http://SEU-IP:PORTA
+# NEXT_PUBLIC_APP_URL=http://SEU-IP:PORTA
+# Exemplo: http://192.168.1.100:3000 ou http://projeto.easypanel.host:3000
 
 # OPCIONAIS (para desenvolvedores)
 DEV_EMAIL_1=seu-email@example.com
 NEXT_PUBLIC_DEV_EMAIL_1=seu-email@example.com
 ```
+
+**⚠️ IMPORTANTE sobre URLs:**
+- Se você **NÃO tem domínio**, use o IP do servidor ou o domínio fornecido pelo EasyPanel
+- Você pode encontrar a URL após fazer o primeiro deploy no EasyPanel
+- Exemplo: `http://192.168.1.100:3000` ou `http://seu-projeto.easypanel.host:3000`
+- Depois que configurar um domínio, atualize essas variáveis
 
 **⚠️ IMPORTANTE:** Gere o `NEXTAUTH_SECRET` antes:
 ```bash
