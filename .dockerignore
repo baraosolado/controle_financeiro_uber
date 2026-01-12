@@ -33,8 +33,7 @@ Thumbs.db
 .gitignore
 
 # Docker
-Dockerfile
-.dockerignore
+Dockerfile.alternative
 docker-compose.yml
 
 # Capacitor
@@ -58,3 +57,6 @@ coverage
 README.md
 *.md
 !README.md
+!DEPLOY_EASYPANEL.md
+!EASYPANEL_QUICK_START.md
+!EASYPANEL_GITHUB_SETUP.md

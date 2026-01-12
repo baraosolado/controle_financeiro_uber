@@ -33,7 +33,8 @@ RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 # Usar next build diretamente, já que Prisma foi gerado acima
-RUN npx next build
+# Mostrar erros detalhados se o build falhar
+RUN set -o pipefail && npx next build 2>&1 | tee build.log || (echo "=== Build falhou, mostrando logs ===" && cat build.log && echo "=== Verificando .next/trace ===" && cat .next/trace 2>/dev/null || true && exit 1)
 
 # Stage 3: Runner (produção)
 FROM node:18-alpine AS runner
