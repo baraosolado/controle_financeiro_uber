@@ -1,8 +1,8 @@
-# Dockerfile usando Heroku Builder - Versão otimizada para builds Node.js
-# Use este se o Dockerfile principal continuar com problemas
+# Dockerfile usando Node.js - Versão otimizada para builds
+# Compatível com Docker tradicional (não buildpacks)
 
 # Stage 1: Dependencies
-FROM heroku/builder:24 AS deps
+FROM node:18 AS deps
 WORKDIR /app
 
 # Instalar dependências do sistema
@@ -20,7 +20,7 @@ COPY package-lock.json* ./
 RUN npm ci || npm install
 
 # Stage 2: Builder
-FROM heroku/builder:24 AS builder
+FROM node:18 AS builder
 WORKDIR /app
 
 # Instalar dependências do sistema
