@@ -36,7 +36,9 @@
 
 ## 🔐 Variáveis de Ambiente
 
-### Variáveis OBRIGATÓRIAS
+### Variáveis OBRIGATÓRIAS (Runtime)
+
+Estas variáveis são usadas quando a aplicação está rodando:
 
 - [ ] **DATABASE_URL**
   ```env
@@ -59,19 +61,25 @@
   - Com domínio: `https://seu-dominio.com`
   - Sem domínio: `http://SEU-IP:PORTA`
 
-- [ ] **NEXT_PUBLIC_APP_URL**
+### Variáveis OBRIGATÓRIAS (Build Time)
+
+⚠️ **IMPORTANTE:** Estas variáveis devem ser configuradas como **Build Args** no EasyPanel, não apenas como Environment Variables.
+
+- [ ] **NEXT_PUBLIC_APP_URL** (Build Arg)
   - Com domínio: `https://seu-dominio.com`
   - Sem domínio: `http://SEU-IP:PORTA`
+  - **Por quê?** Variáveis `NEXT_PUBLIC_*` são injetadas no build time e ficam no bundle JavaScript
 
 ### Variáveis OPCIONAIS (Build Time)
 
-Estas variáveis são injetadas durante o build do Docker:
+- [ ] **NEXT_PUBLIC_DEV_EMAIL_1** (Build Arg - para acesso à documentação)
+- [ ] **NEXT_PUBLIC_DEV_EMAIL_2** (Build Arg - opcional)
+- [ ] **NEXT_PUBLIC_DEV_EMAIL_3** (Build Arg - opcional)
 
-- [ ] **NEXT_PUBLIC_DEV_EMAIL_1** (para acesso à documentação)
-- [ ] **NEXT_PUBLIC_DEV_EMAIL_2** (opcional)
-- [ ] **NEXT_PUBLIC_DEV_EMAIL_3** (opcional)
-
-**⚠️ IMPORTANTE:** Variáveis `NEXT_PUBLIC_*` devem ser configuradas como **Build Args** no EasyPanel, não apenas como Environment Variables.
+**⚠️ IMPORTANTE sobre Build Args:**
+- No EasyPanel, configure como **Build Arguments** ou **Build-time Variables**
+- Se alterar essas variáveis, é necessário fazer **rebuild** do container
+- Variáveis `NEXT_PUBLIC_*` não podem ser alteradas em runtime
 
 ---
 
@@ -80,6 +88,7 @@ Estas variáveis são injetadas durante o build do Docker:
 ### Primeiro Deploy
 
 - [ ] Verificar todas as variáveis de ambiente configuradas
+- [ ] Verificar se variáveis `NEXT_PUBLIC_*` estão como Build Args
 - [ ] Clicar em **"Deploy"** ou **"Build"**
 - [ ] Aguardar build completar (5-10 minutos na primeira vez)
 - [ ] Verificar logs se houver erros
@@ -148,6 +157,18 @@ docker exec -it <container-id> npx prisma migrate deploy
    docker exec -it <container-id> npx prisma migrate deploy
    ```
 
+### Quando Fazer Rebuild
+
+- [ ] Alterações no código
+- [ ] Alterações em variáveis `NEXT_PUBLIC_*`
+- [ ] Alterações em `package.json` (novas dependências)
+- [ ] Alterações em `next.config.js`
+
+### Quando NÃO Precisa Rebuild
+
+- [ ] Alterações apenas em variáveis de ambiente runtime (não `NEXT_PUBLIC_*`)
+- [ ] Apenas restart do container
+
 ---
 
 ## 🐛 Troubleshooting
@@ -158,13 +179,15 @@ docker exec -it <container-id> npx prisma migrate deploy
 - [ ] Verificar se todas as variáveis estão configuradas
 - [ ] Verificar se `NEXT_PUBLIC_*` estão como Build Args
 - [ ] Verificar se o repositório Git está acessível
+- [ ] Verificar se `DATABASE_URL` fake está sendo usado durante build (não precisa ser real)
 
 ### Aplicação Não Inicia
 
 - [ ] Verificar logs do container
-- [ ] Verificar se `DATABASE_URL` está correto
+- [ ] Verificar se `DATABASE_URL` está correto (runtime)
 - [ ] Verificar se `NEXTAUTH_SECRET` está configurado
 - [ ] Verificar se a porta está correta
+- [ ] Verificar se `server.js` existe (gerado pelo Next.js standalone)
 
 ### Erro de Conexão com Banco
 
@@ -180,6 +203,12 @@ docker exec -it <container-id> npx prisma migrate deploy
 - [ ] Limpar cookies do navegador
 - [ ] Verificar se `ALLOWED_ORIGINS` está correto
 
+### Variáveis NEXT_PUBLIC_* Não Funcionam
+
+- [ ] Verificar se estão configuradas como **Build Args**
+- [ ] Fazer **rebuild** do container (não apenas restart)
+- [ ] Verificar se foram passadas durante o build (ver logs)
+
 ---
 
 ## 📝 Notas Importantes
@@ -188,7 +217,8 @@ docker exec -it <container-id> npx prisma migrate deploy
 
 - Variáveis `NEXT_PUBLIC_*` são injetadas no **build time**, não em runtime
 - Se alterar essas variáveis, é necessário fazer **rebuild** do container
-- No EasyPanel, configure como **Build Args**, não apenas Environment Variables
+- No EasyPanel, configure como **Build Arguments**, não apenas Environment Variables
+- Essas variáveis ficam no bundle JavaScript e não podem ser alteradas sem rebuild
 
 ### Segurança
 
@@ -196,6 +226,7 @@ docker exec -it <container-id> npx prisma migrate deploy
 - [ ] Usar variáveis de ambiente do EasyPanel para dados sensíveis
 - [ ] Gerar `NEXTAUTH_SECRET` único para cada ambiente
 - [ ] Usar HTTPS em produção (configurar SSL no EasyPanel)
+- [ ] Container roda com usuário não-root (segurança)
 
 ### Performance
 
@@ -203,6 +234,15 @@ docker exec -it <container-id> npx prisma migrate deploy
 - [ ] Configurar limites de recursos no EasyPanel
 - [ ] Considerar usar CDN para assets estáticos (futuro)
 - [ ] Configurar cache do Next.js (se necessário)
+
+### Multi-stage Build
+
+O Dockerfile usa multi-stage build:
+- **deps**: Instala dependências (cache otimizado)
+- **builder**: Compila aplicação
+- **runner**: Imagem final minimalista (apenas runtime)
+
+Isso resulta em uma imagem ~80% menor que build único.
 
 ---
 
@@ -215,6 +255,7 @@ docker exec -it <container-id> npx prisma migrate deploy
 - [ ] Funcionalidades principais testadas
 - [ ] Logs sem erros críticos
 - [ ] Variáveis de ambiente configuradas corretamente
+- [ ] Variáveis `NEXT_PUBLIC_*` configuradas como Build Args
 - [ ] Documentação de deploy atualizada
 
 ---
