@@ -5,8 +5,8 @@
 FROM node:18-alpine AS deps
 WORKDIR /app
 
-# Instalar dependências do sistema necessárias
-RUN apk add --no-cache libc6-compat openssl
+# Instalar dependências do sistema necessárias (incluindo build tools)
+RUN apk add --no-cache libc6-compat openssl python3 make g++
 
 # Copiar arquivos de dependências
 COPY package.json ./
@@ -18,8 +18,8 @@ RUN npm ci || npm install
 FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Instalar dependências do sistema para build
-RUN apk add --no-cache libc6-compat openssl
+# Instalar dependências do sistema para build (incluindo build tools)
+RUN apk add --no-cache libc6-compat openssl python3 make g++
 
 # Copiar dependências do stage anterior
 COPY --from=deps /app/node_modules ./node_modules
@@ -29,10 +29,11 @@ COPY . .
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
 RUN npx prisma generate
 
-# Build da aplicação Next.js
+# Build da aplicação Next.js (sem gerar Prisma novamente)
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-RUN npm run build
+# Usar next build diretamente, já que Prisma foi gerado acima
+RUN npx next build
 
 # Stage 3: Runner (produção)
 FROM node:18-alpine AS runner
