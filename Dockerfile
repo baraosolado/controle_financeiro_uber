@@ -13,8 +13,8 @@ RUN apk add --no-cache libc6-compat openssl python3 make g++
 # Copiar arquivos de dependências
 COPY package.json package-lock.json* ./
 
-# Instalar dependências
-RUN npm ci
+# Instalar dependências (fallback para npm install se npm ci falhar)
+RUN npm ci || npm install
 
 # ============================================
 # Stage 2: Build da aplicação
