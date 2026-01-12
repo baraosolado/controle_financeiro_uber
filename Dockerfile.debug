@@ -51,16 +51,9 @@ RUN echo "=== Verificando Prisma Client ===" && \
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 RUN echo "=== Iniciando build Next.js ===" && \
-    npx next build 2>&1 | tee build.log || \
-    (echo "=== Build falhou, mostrando logs ===" && \
-     cat build.log && \
-     cat .next/trace 2>/dev/null || true && \
-     exit 1)
-
-# Verificar se o standalone foi gerado
-RUN echo "=== Verificando se standalone foi gerado ===" && \
-    ls -la .next/ 2>/dev/null || echo "Diretório .next não existe" && \
-    ls -la .next/standalone 2>/dev/null || (echo "ERRO: .next/standalone não foi gerado! O build falhou." && exit 1)
+    npx next build 2>&1 | tee build.log && \
+    echo "=== Verificando se standalone foi gerado ===" && \
+    (ls -la .next/standalone 2>/dev/null && echo "✅ Standalone gerado com sucesso!" || (echo "❌ ERRO: .next/standalone não foi gerado!" && echo "=== Mostrando logs do build ===" && cat build.log && echo "=== Verificando .next/trace ===" && cat .next/trace 2>/dev/null || true && exit 1))
 
 # Stage 3: Runner
 FROM node:18-alpine AS runner
