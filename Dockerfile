@@ -56,8 +56,9 @@ RUN apk add --no-cache openssl
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-# Copiar arquivos públicos
-COPY --from=builder /app/public ./public
+# Criar diretório public e copiar se existir
+RUN mkdir -p ./public
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public/ || true
 
 # Copiar build standalone do Next.js
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
