@@ -35,22 +35,32 @@ COPY . .
 ENV DATABASE_URL="postgresql://fake:fake@fake:5432/fake?schema=public"
 RUN npx prisma generate
 
-# Build Next.js (com logs detalhados e tratamento de erro)
+# Build Next.js (com logs detalhados)
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-RUN set -o pipefail && \
-    npx next build 2>&1 | tee build.log || \
-    (echo "=== ❌ BUILD FALHOU ===" && \
-     echo "=== Logs completos do build ===" && \
-     cat build.log && \
-     echo "=== Verificando .next/trace ===" && \
-     cat .next/trace 2>/dev/null || echo "Trace não disponível" && \
-     echo "=== Listando arquivos .next ===" && \
-     ls -la .next/ 2>/dev/null || echo "Diretório .next não existe" && \
-     exit 1) && \
-    echo "=== ✅ Build completado ===" && \
-    echo "=== Verificando se standalone foi gerado ===" && \
-    (test -d .next/standalone && echo "✅ Standalone gerado com sucesso!" || (echo "❌ ERRO: standalone não gerado!" && exit 1))
+
+# Fazer build e capturar saída
+RUN npx next build 2>&1 | tee build.log; \
+    BUILD_EXIT_CODE=${PIPESTATUS[0]}; \
+    if [ $BUILD_EXIT_CODE -ne 0 ]; then \
+        echo "=== ❌ BUILD FALHOU (exit code: $BUILD_EXIT_CODE) ==="; \
+        echo "=== Logs completos do build ==="; \
+        cat build.log; \
+        echo "=== Verificando .next/trace ==="; \
+        cat .next/trace 2>/dev/null || echo "Trace não disponível"; \
+        echo "=== Listando arquivos .next ==="; \
+        ls -la .next/ 2>/dev/null || echo "Diretório .next não existe"; \
+        exit 1; \
+    fi; \
+    echo "=== ✅ Build completado ==="; \
+    echo "=== Verificando se standalone foi gerado ==="; \
+    if [ ! -d .next/standalone ]; then \
+        echo "❌ ERRO: standalone não gerado!"; \
+        echo "=== Conteúdo do diretório .next ==="; \
+        ls -la .next/ 2>/dev/null || echo "Diretório .next não existe"; \
+        exit 1; \
+    fi; \
+    echo "✅ Standalone gerado com sucesso!"
 
 # ============================================
 # Stage 3: Imagem de produção
