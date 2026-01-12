@@ -57,8 +57,10 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Criar diretório public e copiar se existir
-RUN mkdir -p ./public
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public/ || true
+RUN mkdir -p ./public && \
+    if [ -d "/app/public" ] && [ "$(ls -A /app/public 2>/dev/null)" ]; then \
+        cp -r /app/public/* ./public/ 2>/dev/null || true; \
+    fi
 
 # Copiar build standalone do Next.js
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
