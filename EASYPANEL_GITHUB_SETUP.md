@@ -14,10 +14,8 @@
 - **Repository URL:** `https://github.com/baraosolado/controle_financeiro_uber.git`
 - **Branch:** `main`
 - **Build Command:** (deixar **VAZIO** - o Dockerfile faz tudo)
-- **Dockerfile Path:** `Dockerfile.heroku` (ou `Dockerfile` se preferir)
+- **Dockerfile Path:** `Dockerfile`
 - **Context:** `.` (ponto - significa raiz do projeto)
-
-**⚠️ NOTA:** Se o `Dockerfile` principal não funcionar, use `Dockerfile.heroku` que usa a imagem `heroku/builder:24` otimizada para builds Node.js.
 
 ### 3. Configurar Variáveis de Ambiente
 
