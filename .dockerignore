@@ -1,5 +1,7 @@
 # ============================================
 # .dockerignore - Otimiza build do Docker
+# Exclui arquivos desnecessários do contexto Docker
+# Reduz tamanho do build e acelera upload
 # ============================================
 
 # Dependencies (serão instaladas no container)
@@ -107,3 +109,4 @@ FASE3_PREMIUM_IMPLEMENTACAO.md
 PLANO_ACAO_ANDROID.md
 TROUBLESHOOTING_BUILD.md
 README_API.md
+CHECKLIST_DEPLOY_EASYPANEL.md

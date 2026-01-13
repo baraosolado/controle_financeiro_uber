@@ -54,9 +54,15 @@ prisma/migrations/*.sql
 Thumbs.db
 
 # Capacitor
-android/
 ios/
 .capacitor/
+
+# Android (manter código, ignorar builds e keystores)
+android/app/build/
+android/.gradle/
+android/local.properties
+*.keystore
+*.jks
 
 # Build outputs
 dist/

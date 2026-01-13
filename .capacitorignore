@@ -1,0 +1,11 @@
+# Ignorar arquivos de tipos TypeScript
+.next/types/**
+*.ts
+!*.d.ts
+
+# Ignorar arquivos de build do servidor
+.next/server/**
+.next/cache/**
+
+# Ignorar arquivos de desenvolvimento
+.next/trace

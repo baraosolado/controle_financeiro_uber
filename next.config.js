@@ -2,8 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   // Output standalone: cria uma versão otimizada para Docker
-  // Inclui apenas os arquivos necessários para rodar em produção
-  output: 'standalone',
+  // Para Android (Capacitor), não usar standalone (precisa de arquivos estáticos)
+  // Se BUILD_FOR_ANDROID estiver definido, não usar standalone
+  output: process.env.BUILD_FOR_ANDROID ? undefined : 'standalone',
   
   // Configuração de imagens
   images: {
