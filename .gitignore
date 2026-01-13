@@ -29,6 +29,9 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
+# Credenciais de desenvolvimento (não commitar)
+DEV_CREDENTIALS.md
+
 # Vercel
 .vercel
 
