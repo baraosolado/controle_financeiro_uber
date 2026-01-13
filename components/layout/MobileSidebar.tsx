@@ -132,7 +132,7 @@ export default function MobileSidebar({ userName }: MobileSidebarProps) {
             className="lg:hidden fixed inset-0 bg-black/50 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <aside className="lg:hidden fixed left-0 top-0 z-50 h-screen w-64 bg-white border-r border-gray-200 flex flex-col shadow-xl">
+          <aside className="lg:hidden fixed left-0 top-0 z-50 h-screen w-72 sm:w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col shadow-xl">
             {/* Logo */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
               <div className="flex items-center gap-2">

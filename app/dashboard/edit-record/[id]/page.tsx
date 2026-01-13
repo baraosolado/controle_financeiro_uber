@@ -266,13 +266,14 @@ export default function EditRecordPage() {
 
   return (
     <DashboardLayout userName={userName}>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto w-full">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 sm:mb-6 text-sm sm:text-base"
         >
           <ArrowLeft className="w-4 h-4" />
-          Voltar para o dashboard
+          <span className="hidden sm:inline">Voltar para o dashboard</span>
+          <span className="sm:hidden">Voltar</span>
         </Link>
 
         <Card>

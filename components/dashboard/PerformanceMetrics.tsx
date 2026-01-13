@@ -76,21 +76,21 @@ export default function PerformanceMetrics({
   ]
 
   return (
-    <div className="mb-8">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Métricas de Performance</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="mb-6 sm:mb-8">
+      <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-3 sm:mb-4">Métricas de Performance</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {metrics.map((metric, index) => {
           const Icon = metric.icon
           return (
             <Card key={index}>
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div className={`p-3 ${metric.bgColor} rounded-lg`}>
                     <Icon className={`w-6 h-6 ${metric.color}`} />
                   </div>
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 mb-1">{metric.title}</h3>
-                <p className={`text-2xl font-bold ${metric.color} mb-1`}>{metric.value}</p>
+                <h3 className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{metric.title}</h3>
+                <p className={`text-xl sm:text-2xl font-bold ${metric.color} mb-1`}>{metric.value}</p>
                 <p className="text-xs text-gray-500 mb-2">{metric.description}</p>
                 {metric.subtitle && (
                   <p className="text-xs text-gray-400">{metric.subtitle}</p>

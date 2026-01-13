@@ -30,14 +30,14 @@ export default function Charts({ data }: ChartsProps) {
   const formatTooltipValue = (value: number) => formatCurrency(value)
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
       {/* Gráfico de Evolução Financeira */}
       <Card>
         <CardHeader>
-          <CardTitle>Evolução Financeira (30 dias)</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Evolução Financeira (30 dias)</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+        <CardContent className="p-3 sm:p-6">
+          <ResponsiveContainer width="100%" height={250}>
             <LineChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis
@@ -83,10 +83,10 @@ export default function Charts({ data }: ChartsProps) {
       {/* Gráfico Comparativo Diário */}
       <Card>
         <CardHeader>
-          <CardTitle>Comparativo Diário (30 dias)</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Comparativo Diário (30 dias)</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
+        <CardContent className="p-3 sm:p-6">
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart data={data}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis

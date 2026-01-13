@@ -60,13 +60,23 @@ export default function PlatformEvolutionChart({ platforms, period }: PlatformEv
   }
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
+    <ResponsiveContainer width="100%" height={250}>
       <LineChart data={evolutionData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="period" />
-        <YAxis tickFormatter={(value) => `R$ ${value}`} />
+        <XAxis 
+          dataKey="period" 
+          style={{ fontSize: '11px' }}
+          angle={-45}
+          textAnchor="end"
+          height={60}
+        />
+        <YAxis 
+          tickFormatter={(value) => `R$ ${value}`}
+          style={{ fontSize: '11px' }}
+          width={60}
+        />
         <Tooltip formatter={(value: number) => formatCurrency(value)} />
-        <Legend />
+        <Legend wrapperStyle={{ fontSize: '12px' }} />
         {platforms.map((platform) => (
           <Line
             key={platform.platform}

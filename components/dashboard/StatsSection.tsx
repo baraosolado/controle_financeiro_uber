@@ -24,40 +24,40 @@ interface StatsSectionProps {
 
 export default function StatsSection({ monthlyStats, totalStats }: StatsSectionProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
       {/* Estatísticas do Mês */}
       <Card>
         <CardHeader>
-          <CardTitle>Estatísticas do Mês</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Estatísticas do Mês</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Dias trabalhados</span>
-              <span className="font-semibold text-gray-900">
+        <CardContent className="p-4 sm:p-6">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Dias trabalhados</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {monthlyStats.daysWorked} dias
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Média de lucro por dia</span>
-              <span className="font-semibold text-gray-900">
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Média de lucro por dia</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {formatCurrency(monthlyStats.avgProfitPerDay)}
               </span>
             </div>
-            <div className="flex justify-between items-center pt-2 border-t">
-              <span className="text-gray-600">Lucro por quilômetro</span>
+            <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700 text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Lucro por quilômetro</span>
               <span className="font-semibold text-success">
                 {formatCurrency(monthlyStats.profitPerKm)}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Custo por quilômetro</span>
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Custo por quilômetro</span>
               <span className="font-semibold text-error">
                 {formatCurrency(monthlyStats.costPerKm)}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Receita por quilômetro</span>
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Receita por quilômetro</span>
               <span className="font-semibold text-primary">
                 {formatCurrency(monthlyStats.revenuePerKm)}
               </span>
@@ -95,37 +95,37 @@ export default function StatsSection({ monthlyStats, totalStats }: StatsSectionP
       {/* Totais Acumulados */}
       <Card>
         <CardHeader>
-          <CardTitle>Totais Acumulados</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Totais Acumulados</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Faturamento total</span>
-              <span className="font-semibold text-gray-900">
+        <CardContent className="p-4 sm:p-6">
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Faturamento total</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {formatCurrency(totalStats.totalRevenue)}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Gastos totais</span>
-              <span className="font-semibold text-gray-900">
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Gastos totais</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {formatCurrency(totalStats.totalExpenses)}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Lucro total</span>
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Lucro total</span>
               <span className="font-semibold text-primary">
                 {formatCurrency(totalStats.totalProfit)}
               </span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Quilometragem total</span>
-              <span className="font-semibold text-gray-900">
+            <div className="flex justify-between items-center text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Quilometragem total</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {formatNumber(totalStats.totalKilometers, 0)} km
               </span>
             </div>
-            <div className="flex justify-between items-center pt-2 border-t">
-              <span className="text-gray-600">Total de dias trabalhados</span>
-              <span className="font-semibold text-gray-900">
+            <div className="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700 text-sm sm:text-base">
+              <span className="text-gray-600 dark:text-gray-400">Total de dias trabalhados</span>
+              <span className="font-semibold text-gray-900 dark:text-white">
                 {totalStats.totalDaysWorked} dias
               </span>
             </div>

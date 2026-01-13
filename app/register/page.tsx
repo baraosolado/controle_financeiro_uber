@@ -104,21 +104,21 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 py-8 sm:py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center justify-center mb-6 sm:mb-8">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-primary rounded-lg">
-              <Car className="w-6 h-6 text-white" />
+              <Car className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
-            <DollarSign className="w-6 h-6 text-primary" />
-            <span className="text-2xl font-bold text-gray-900">Financeiro</span>
+            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Financeiro</span>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">
             Criar conta
           </h1>
 

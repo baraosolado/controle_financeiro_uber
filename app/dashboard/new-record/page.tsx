@@ -171,13 +171,14 @@ export default function NewRecordPage() {
 
   return (
     <DashboardLayout userName={userName}>
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto w-full">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6"
+          className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4 sm:mb-6 text-sm sm:text-base"
         >
           <ArrowLeft className="w-4 h-4" />
-          Voltar para o dashboard
+          <span className="hidden sm:inline">Voltar para o dashboard</span>
+          <span className="sm:hidden">Voltar</span>
         </Link>
 
         <Card>
@@ -209,7 +210,7 @@ export default function NewRecordPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Plataformas Utilizadas
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3">
                   {PLATFORMS.map((platform) => (
                     <label
                       key={platform.id}
@@ -291,7 +292,7 @@ export default function NewRecordPage() {
               />
 
               {/* Horas Trabalhadas */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   label="Horas Trabalhadas (opcional)"
                   type="number"
@@ -307,7 +308,7 @@ export default function NewRecordPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Horário de Trabalho (opcional)
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     <Input
                       type="time"
                       name="startTime"
@@ -504,10 +505,10 @@ export default function NewRecordPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Button
                   type="submit"
-                  className="flex-1"
+                  className="flex-1 w-full sm:w-auto"
                   disabled={loading}
                 >
                   {loading ? 'Salvando...' : '💾 Salvar Registro'}
@@ -517,6 +518,7 @@ export default function NewRecordPage() {
                   variant="outline"
                   onClick={() => router.push('/dashboard')}
                   disabled={loading}
+                  className="w-full sm:w-auto"
                 >
                   Cancelar
                 </Button>

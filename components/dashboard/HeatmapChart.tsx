@@ -69,14 +69,14 @@ export default function HeatmapChart({ data }: HeatmapChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Heatmap de Performance</CardTitle>
-        <p className="text-sm text-gray-600 mt-1">
+        <CardTitle className="text-base sm:text-lg">Heatmap de Performance</CardTitle>
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-1">
           Lucro por dia da semana e horário (últimos 30 dias)
         </p>
       </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto">
-          <div className="min-w-[800px]">
+      <CardContent className="p-3 sm:p-6">
+        <div className="overflow-x-auto -mx-3 sm:mx-0">
+          <div className="min-w-[600px] sm:min-w-[800px]">
             <div className="grid gap-1 mb-4" style={{ gridTemplateColumns: '60px repeat(24, 1fr)' }}>
               {/* Header com horas */}
               <div className="text-xs text-gray-500 font-medium"></div>

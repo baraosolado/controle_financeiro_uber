@@ -79,7 +79,7 @@ export default function SummaryCards({
   ]
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
       {cards.map((card, index) => {
         const Icon = card.icon
         return (
@@ -87,7 +87,7 @@ export default function SummaryCards({
             key={index}
             className={card.highlight ? 'ring-2 ring-primary/20' : ''}
           >
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className={`p-3 ${card.bgColor} rounded-lg`}>
                   <Icon className={`w-6 h-6 ${card.color}`} />
@@ -107,7 +107,7 @@ export default function SummaryCards({
                 {card.title}
               </h3>
               <p
-                className={`text-2xl font-bold ${
+                className={`text-xl sm:text-2xl font-bold ${
                   card.highlight ? 'text-primary' : 'text-gray-900 dark:text-white'
                 }`}
               >
