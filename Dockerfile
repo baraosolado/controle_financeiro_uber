@@ -79,23 +79,22 @@ ENV NEXT_PUBLIC_DEV_EMAIL_3=${NEXT_PUBLIC_DEV_EMAIL_3}
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# Build com captura de erros detalhada
-RUN npx next build 2>&1 | tee build.log || ( \
+# Build Next.js
+# Usando abordagem mais simples e robusta
+RUN npx next build || ( \
     echo "=== ❌ BUILD FALHOU ===" && \
-    echo "=== Logs completos do build ===" && \
-    cat build.log && \
     echo "=== Verificando .next/trace ===" && \
-    (cat .next/trace 2>/dev/null || echo "Trace não disponível") && \
+    cat .next/trace 2>/dev/null || echo "Trace não disponível" && \
     echo "=== Listando arquivos .next ===" && \
-    (ls -la .next/ 2>/dev/null || echo "Diretório .next não existe") && \
+    ls -la .next/ 2>/dev/null || echo "Diretório .next não existe" && \
     exit 1 \
-); \
-echo "=== ✅ Build completado ===" && \
-echo "=== Verificando se standalone foi gerado ===" && \
-if [ ! -d .next/standalone ]; then \
+)
+
+# Verificar se standalone foi gerado
+RUN if [ ! -d .next/standalone ]; then \
     echo "❌ ERRO: standalone não gerado!" && \
     echo "=== Conteúdo do diretório .next ===" && \
-    (ls -la .next/ 2>/dev/null || echo "Diretório .next não existe") && \
+    ls -la .next/ 2>/dev/null || echo "Diretório .next não existe" && \
     exit 1; \
 fi && \
 echo "✅ Standalone gerado com sucesso!"
