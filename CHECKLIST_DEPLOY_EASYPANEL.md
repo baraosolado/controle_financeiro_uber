@@ -104,18 +104,22 @@ Estas variáveis são usadas quando a aplicação está rodando:
 
 ## 🗄️ Banco de Dados
 
-### Executar Migrações
+### ✅ Migrações Automáticas
 
-Após o primeiro deploy, executar migrações:
+**As migrações do Prisma são executadas automaticamente no startup do container!**
 
+O script `start.sh` executa `prisma migrate deploy` antes de iniciar o servidor Next.js.
+
+**Verificações:**
+
+- [ ] Verificar logs do container para confirmar que as migrações foram executadas
+- [ ] Verificar se as tabelas foram criadas no banco de dados
+- [ ] (Opcional) Executar seed manualmente se necessário: `docker exec -it <container-id> npm run db:seed`
+
+**Nota:** Se precisar executar migrações manualmente (ex: rollback), use:
 ```bash
-# Via terminal do EasyPanel ou SSH
 docker exec -it <container-id> npx prisma migrate deploy
 ```
-
-- [ ] Executar migrações do Prisma
-- [ ] Verificar se as tabelas foram criadas
-- [ ] (Opcional) Executar seed: `docker exec -it <container-id> npm run db:seed`
 
 ---
 

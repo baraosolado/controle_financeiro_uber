@@ -130,6 +130,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modul
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=builder --chown=nextjs:nodejs /app/package.json ./package.json
 
+# Copiar script de inicialização (executa migrações automaticamente)
+COPY --from=builder --chown=nextjs:nodejs /app/start.sh ./start.sh
+RUN chmod +x start.sh
+
+# IMPORTANTE: Copiar node_modules completo para Prisma CLI funcionar
+# O standalone do Next.js não inclui o Prisma CLI e suas dependências
+# Precisamos dele para executar "prisma migrate deploy" no startup
+# Alternativa: usar npx prisma migrate deploy (mais lento, baixa CLI na primeira execução)
+COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
+
 # Usar usuário não-root (segurança)
 USER nextjs
 
@@ -139,6 +149,6 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Iniciar aplicação
-# O Next.js standalone cria um server.js na raiz do diretório standalone
-CMD ["node", "server.js"]
+# Iniciar aplicação com migrações automáticas
+# O script start.sh executa prisma migrate deploy antes de iniciar o servidor
+CMD ["./start.sh"]
