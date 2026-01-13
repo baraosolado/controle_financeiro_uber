@@ -80,15 +80,8 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 # Build Next.js
-# Usando abordagem mais simples e robusta
-RUN npx next build || ( \
-    echo "=== ❌ BUILD FALHOU ===" && \
-    echo "=== Verificando .next/trace ===" && \
-    cat .next/trace 2>/dev/null || echo "Trace não disponível" && \
-    echo "=== Listando arquivos .next ===" && \
-    ls -la .next/ 2>/dev/null || echo "Diretório .next não existe" && \
-    exit 1 \
-)
+# O Next.js já exibe logs detalhados, então não precisamos capturar manualmente
+RUN npx next build
 
 # Verificar se standalone foi gerado
 RUN if [ ! -d .next/standalone ]; then \
